@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -14,6 +13,7 @@ import JobProviderRegister from './components/auth/JobProviderRegister';
 import JobSeekerDashboard from './components/dashboard/JobSeekerDashboard';
 import JobProviderDashboard from './components/dashboard/JobProviderDashboard';
 import Profile from './components/Profile';
+import Analytics from './components/Analytics';
 
 const App: React.FC = () => {
   return (
@@ -32,6 +32,7 @@ const App: React.FC = () => {
               <Route path="/dashboard/jobSeeker" element={<JobSeekerDashboard />} />
               <Route path="/dashboard/jobProvider" element={<JobProviderDashboard />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             <Toaster position="bottom-center" />

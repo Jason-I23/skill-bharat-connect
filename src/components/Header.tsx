@@ -3,13 +3,14 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Globe, Bell } from 'lucide-react';
+import { LogOut, User, Globe, Bell, BarChart3 } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from './ui/dropdown-menu';
 
 const Header: React.FC = () => {
@@ -27,6 +28,10 @@ const Header: React.FC = () => {
 
   const handleProfileClick = () => {
     navigate('/profile');
+  };
+
+  const handleAnalyticsClick = () => {
+    navigate('/analytics');
   };
 
   const handleLogout = () => {
@@ -85,8 +90,14 @@ const Header: React.FC = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={handleProfileClick}>
+                    <User className="w-4 h-4 mr-2" />
                     {t('profile')}
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleAnalyticsClick}>
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Analytics
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
                     {t('logout')}

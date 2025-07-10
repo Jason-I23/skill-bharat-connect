@@ -5,189 +5,372 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar } from 'lucide-react';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X } from 'lucide-react';
+import { toast } from 'sonner';
 import sampleData from '../../data/sampleData.json';
 
 const JobSeekerDashboard: React.FC = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
-  const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
+  const [appliedJobs, setAppliedJobs] = useState<string[]>(['job_1', 'job_3']);
+  const [filters, setFilters] = useState({
+    location: '',
+    skill: '',
+    type: '',
+    minPayment: '',
+    rating: ''
+  });
+  const [showJobDialog, setShowJobDialog] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<any>(null);
+
+  const completedJobs = ['job_2'];
+  const inProgressJobs = ['job_1'];
+  const totalEarnings = 45000;
 
   const stats = {
     applied: appliedJobs.length,
-    completed: 0,
-    inProgress: 0
+    completed: completedJobs.length,
+    inProgress: inProgressJobs.length,
+    earnings: totalEarnings
   };
 
-  const handleJobSelect = (jobId: string) => {
-    setSelectedJobs(prev => 
-      prev.includes(jobId) 
-        ? prev.filter(id => id !== jobId)
-        : [...prev, jobId]
+  const handleJobSelect = (job: any) => {
+    setSelectedJob(job);
+    setShowJobDialog(true);
+  };
+
+  const handleApplyJob = (jobId: string) => {
+    if (!appliedJobs.includes(jobId)) {
+      setAppliedJobs(prev => [...prev, jobId]);
+      toast.success('Applied for job successfully!');
+    }
+    setShowJobDialog(false);
+  };
+
+  const handleCancelApplication = (jobId: string) => {
+    setAppliedJobs(prev => prev.filter(id => id !== jobId));
+    toast.success('Application cancelled successfully!');
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      location: '',
+      skill: '',
+      type: '',
+      minPayment: '',
+      rating: ''
+    });
+  };
+
+  const filteredJobs = sampleData.jobs.filter(job => {
+    return (
+      (!filters.location || job.location.toLowerCase().includes(filters.location.toLowerCase())) &&
+      (!filters.skill || job.skills.some(skill => skill.toLowerCase().includes(filters.skill.toLowerCase()))) &&
+      (!filters.type || job.paymentType === filters.type) &&
+      (!filters.minPayment || job.payment >= parseInt(filters.minPayment)) &&
+      (!filters.rating || job.rating >= parseFloat(filters.rating))
     );
-  };
+  });
 
-  const handleCheckout = () => {
-    if (selectedJobs.length === 0) return;
-    
-    setAppliedJobs(prev => [...prev, ...selectedJobs]);
-    setSelectedJobs([]);
-    // Show confirmation popup (simplified for demo)
-    alert(`Applied for ${selectedJobs.length} jobs successfully!`);
+  const getJobStatus = (jobId: string) => {
+    if (completedJobs.includes(jobId)) return 'completed';
+    if (inProgressJobs.includes(jobId)) return 'inProgress';
+    if (appliedJobs.includes(jobId)) return 'applied';
+    return 'available';
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg">
-        <h1 className="text-2xl font-bold mb-2">{t('welcome')}, {user?.name}!</h1>
-        <p className="opacity-90">Explore job opportunities and build your career</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Welcome Section */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg">
+          <h1 className="text-2xl font-bold">{t('welcome')}, {user?.name}!</h1>
+        </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Briefcase className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-            <div className="text-2xl font-bold">{stats.applied}</div>
-            <div className="text-sm text-gray-600">Jobs Applied</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
-            <div className="text-2xl font-bold">{stats.completed}</div>
-            <div className="text-sm text-gray-600">Jobs Completed</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Clock className="w-8 h-8 mx-auto mb-2 text-orange-600" />
-            <div className="text-2xl font-bold">{stats.inProgress}</div>
-            <div className="text-sm text-gray-600">In Progress</div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="bg-white shadow-md">
+            <CardContent className="p-4 text-center">
+              <Briefcase className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+              <div className="text-2xl font-bold">{stats.applied}</div>
+              <div className="text-sm text-gray-600">Jobs Applied</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-white shadow-md">
+            <CardContent className="p-4 text-center">
+              <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
+              <div className="text-2xl font-bold">{stats.completed}</div>
+              <div className="text-sm text-gray-600">Jobs Completed</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-white shadow-md">
+            <CardContent className="p-4 text-center">
+              <Clock className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+              <div className="text-2xl font-bold">{stats.inProgress}</div>
+              <div className="text-sm text-gray-600">In Progress</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-white shadow-md">
+            <CardContent className="p-4 text-center">
+              <IndianRupee className="w-8 h-8 mx-auto mb-2 text-green-600" />
+              <div className="text-2xl font-bold">₹{stats.earnings.toLocaleString()}</div>
+              <div className="text-sm text-gray-600">Total Earnings</div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Certifications Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recommended Certifications</CardTitle>
-          <CardDescription>Complete these certifications to access better job opportunities</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sampleData.certifications.slice(0, 4).map((cert, index) => (
-              <div key={index} className="border rounded-lg p-4">
-                <h4 className="font-semibold">{cert.name}</h4>
-                <p className="text-sm text-gray-600 mb-2">{cert.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Duration: {cert.duration}</span>
-                  <Button size="sm">Start Course</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Available Jobs */}
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Available Jobs</CardTitle>
-              <CardDescription>Jobs matching your skills and location</CardDescription>
-            </div>
-            {selectedJobs.length > 0 && (
-              <Button onClick={handleCheckout}>
-                Checkout ({selectedJobs.length})
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {sampleData.jobs.map((job) => (
-            <div key={job.id} className="border rounded-lg p-4 space-y-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg">{job.title}</h3>
-                  <p className="text-gray-600">{job.company}</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-green-600">₹{job.payment}</div>
-                  <div className="text-sm text-gray-600">{job.paymentType}</div>
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline">
-                  <MapPin className="w-3 h-3 mr-1" />
-                  {job.location}
-                </Badge>
-                <Badge variant="outline">
-                  <Clock className="w-3 h-3 mr-1" />
-                  {job.type}
-                </Badge>
-                <Badge variant="outline">
-                  <Star className="w-3 h-3 mr-1" />
-                  {job.rating}
-                </Badge>
-              </div>
-
-              <p className="text-sm text-gray-600">{job.description}</p>
-
-              <div className="flex justify-between items-center">
-                <div className="flex gap-4 text-sm text-gray-600">
-                  <span><Users className="w-4 h-4 inline mr-1" />{job.applicants} applied</span>
-                  <span><CheckCircle className="w-4 h-4 inline mr-1" />{job.recruited} recruited</span>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedJobs.includes(job.id)}
-                    onChange={() => handleJobSelect(job.id)}
-                    className="mr-2"
-                  />
-                  <Button 
-                    variant={selectedJobs.includes(job.id) ? "default" : "outline"}
-                    size="sm"
-                  >
-                    {selectedJobs.includes(job.id) ? 'Selected' : 'Select'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* Applied Jobs */}
-      {appliedJobs.length > 0 && (
-        <Card>
+        {/* Job Filters */}
+        <Card className="bg-white shadow-md">
           <CardHeader>
-            <CardTitle>Applied Jobs</CardTitle>
-            <CardDescription>Track your job applications</CardDescription>
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="w-5 h-5" />
+                Job Filters
+              </CardTitle>
+              <Button variant="outline" size="sm" onClick={clearFilters}>
+                <X className="w-4 h-4 mr-2" />
+                Clear Filters
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {appliedJobs.map((jobId, index) => {
-                const job = sampleData.jobs.find(j => j.id === jobId);
-                return job ? (
-                  <div key={index} className="flex justify-between items-center p-3 border rounded">
-                    <div>
-                      <h4 className="font-medium">{job.title}</h4>
-                      <p className="text-sm text-gray-600">{job.company}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  placeholder="Search location"
+                  value={filters.location}
+                  onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="skill">Skill</Label>
+                <Input
+                  id="skill"
+                  placeholder="Search skill"
+                  value={filters.skill}
+                  onChange={(e) => setFilters(prev => ({ ...prev, skill: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="type">Payment Type</Label>
+                <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hourly">Hourly</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="fixed">Fixed Project</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="minPayment">Min Payment (₹)</Label>
+                <Input
+                  id="minPayment"
+                  type="number"
+                  placeholder="Min amount"
+                  value={filters.minPayment}
+                  onChange={(e) => setFilters(prev => ({ ...prev, minPayment: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="rating">Min Rating</Label>
+                <Select value={filters.rating} onValueChange={(value) => setFilters(prev => ({ ...prev, rating: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select rating" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="4.5">4.5+ stars</SelectItem>
+                    <SelectItem value="4.0">4.0+ stars</SelectItem>
+                    <SelectItem value="3.5">3.5+ stars</SelectItem>
+                    <SelectItem value="3.0">3.0+ stars</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Available Jobs Grid */}
+        <Card className="bg-white shadow-md">
+          <CardHeader>
+            <CardTitle>Available Jobs ({filteredJobs.length})</CardTitle>
+            <CardDescription>Jobs matching your filters</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredJobs.map((job) => {
+                const status = getJobStatus(job.id);
+                return (
+                  <div key={job.id} className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow cursor-pointer bg-gray-50" onClick={() => handleJobSelect(job)}>
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg">{job.title}</h3>
+                        <p className="text-gray-600">{job.company}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-green-600">₹{job.payment.toLocaleString()}</div>
+                        <div className="text-sm text-gray-600">{job.paymentType}</div>
+                      </div>
                     </div>
-                    <Badge>Pending</Badge>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        {job.location}
+                      </Badge>
+                      <Badge variant="outline">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {job.type}
+                      </Badge>
+                      <Badge variant="outline">
+                        <Star className="w-3 h-3 mr-1" />
+                        {job.rating}
+                      </Badge>
+                    </div>
+
+                    <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
+
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-4 text-sm text-gray-600">
+                        <span><Users className="w-4 h-4 inline mr-1" />{job.applicants} applied</span>
+                      </div>
+                      <Badge variant={
+                        status === 'completed' ? 'default' :
+                        status === 'inProgress' ? 'secondary' :
+                        status === 'applied' ? 'outline' : 'destructive'
+                      }>
+                        {status === 'completed' ? 'Completed' :
+                         status === 'inProgress' ? 'In Progress' :
+                         status === 'applied' ? 'Applied' : 'Available'}
+                      </Badge>
+                    </div>
                   </div>
-                ) : null;
+                );
               })}
             </div>
           </CardContent>
         </Card>
-      )}
+
+        {/* Applied Jobs */}
+        {appliedJobs.length > 0 && (
+          <Card className="bg-white shadow-md">
+            <CardHeader>
+              <CardTitle>My Applications</CardTitle>
+              <CardDescription>Track your job applications</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {appliedJobs.map((jobId) => {
+                  const job = sampleData.jobs.find(j => j.id === jobId);
+                  const status = getJobStatus(jobId);
+                  return job ? (
+                    <div key={jobId} className="flex justify-between items-center p-4 border rounded-lg bg-gray-50">
+                      <div>
+                        <h4 className="font-medium">{job.title}</h4>
+                        <p className="text-sm text-gray-600">{job.company} • ₹{job.payment.toLocaleString()} {job.paymentType}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={
+                          status === 'completed' ? 'default' :
+                          status === 'inProgress' ? 'secondary' : 'outline'
+                        }>
+                          {status === 'completed' ? 'Completed' :
+                           status === 'inProgress' ? 'In Progress' : 'Applied'}
+                        </Badge>
+                        {status === 'applied' && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleCancelApplication(jobId)}
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Job Details Dialog */}
+        <Dialog open={showJobDialog} onOpenChange={setShowJobDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{selectedJob?.title}</DialogTitle>
+              <DialogDescription>{selectedJob?.company}</DialogDescription>
+            </DialogHeader>
+            {selectedJob && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    ₹{selectedJob.payment.toLocaleString()} {selectedJob.paymentType}
+                  </div>
+                  <div className="flex gap-2">
+                    <Badge variant="outline">
+                      <MapPin className="w-3 h-3 mr-1" />
+                      {selectedJob.location}
+                    </Badge>
+                    <Badge variant="outline">
+                      <Star className="w-3 h-3 mr-1" />
+                      {selectedJob.rating}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold mb-2">Job Description</h4>
+                  <p className="text-gray-600">{selectedJob.description}</p>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold mb-2">Required Skills</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedJob.skills.map((skill: string, index: number) => (
+                      <Badge key={index} variant="secondary">{skill}</Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold mb-2">Tools Required</h4>
+                  <p className="text-gray-600">{selectedJob.tools}</p>
+                </div>
+                
+                <div className="flex justify-between items-center pt-4">
+                  <div className="text-sm text-gray-600">
+                    <Users className="w-4 h-4 inline mr-1" />
+                    {selectedJob.applicants} applicants • {selectedJob.recruited} recruited
+                  </div>
+                  {!appliedJobs.includes(selectedJob.id) && (
+                    <Button onClick={() => handleApplyJob(selectedJob.id)}>
+                      Apply for Job
+                    </Button>
+                  )}
+                  {appliedJobs.includes(selectedJob.id) && (
+                    <Button variant="outline" onClick={() => handleCancelApplication(selectedJob.id)}>
+                      Cancel Application
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
