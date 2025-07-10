@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Users, Briefcase, TrendingUp, Award, BookOpen, GraduationCap } from 'lucide-react';
-import sampleData from '../data/sampleData.json';
+import { Users, Briefcase, TrendingUp, Award, Shield, CheckCircle, Star, ExternalLink } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -85,61 +84,8 @@ const LandingPage: React.FC = () => {
           </Card>
         </div>
 
-        {/* Certifications Section */}
-        <div className="mb-16">
-          <div className="text-center mb-8">
-            <h2 className={`font-bold text-gray-900 mb-4 ${language === 'ta' ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'}`}>
-              {t('availableCertifications')}
-            </h2>
-            <p className={`text-gray-600 ${language === 'ta' ? 'text-sm md:text-base' : 'text-base md:text-lg'}`}>
-              {t('certificationDescription')}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sampleData.certifications.map((cert, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center mb-2">
-                    <GraduationCap className="w-6 h-6 mr-2 text-blue-600" />
-                    <CardTitle className={`${language === 'ta' ? 'text-base' : 'text-lg'}`}>
-                      {cert.name}
-                    </CardTitle>
-                  </div>
-                  <CardDescription className={`${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
-                    {cert.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
-                        {t('duration')}:
-                      </span>
-                      <span className={`font-medium ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
-                        {cert.duration}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
-                        {t('level')}:
-                      </span>
-                      <span className={`font-medium ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
-                        {cert.level}
-                      </span>
-                    </div>
-                    <Button size="sm" className="w-full mt-4">
-                      {t('learnMore')}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
         {/* Features Section */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className={`flex items-center ${language === 'ta' ? 'text-lg' : 'text-xl'}`}>
@@ -180,7 +126,115 @@ const LandingPage: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Credibility Section */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-16">
+          <div className="text-center mb-8">
+            <h2 className={`font-bold text-gray-900 mb-4 ${language === 'ta' ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'}`}>
+              {t('whyTrustUs')}
+            </h2>
+            <p className={`text-gray-600 max-w-3xl mx-auto ${language === 'ta' ? 'text-sm md:text-base' : 'text-base md:text-lg'}`}>
+              {t('credibilityDescription')}
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className={`font-semibold mb-2 ${language === 'ta' ? 'text-base' : 'text-lg'}`}>
+                {t('governmentBacked')}
+              </h3>
+              <p className={`text-gray-600 ${language === 'ta' ? 'text-sm' : 'text-sm'}`}>
+                {t('governmentBackedDesc')}
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className={`font-semibold mb-2 ${language === 'ta' ? 'text-base' : 'text-lg'}`}>
+                {t('verifiedJobs')}
+              </h3>
+              <p className={`text-gray-600 ${language === 'ta' ? 'text-sm' : 'text-sm'}`}>
+                {t('verifiedJobsDesc')}
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Star className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className={`font-semibold mb-2 ${language === 'ta' ? 'text-base' : 'text-lg'}`}>
+                {t('skillDevelopment')}
+              </h3>
+              <p className={`text-gray-600 ${language === 'ta' ? 'text-sm' : 'text-sm'}`}>
+                {t('skillDevelopmentDesc')}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="font-bold text-lg mb-4">{t('skillIndiaJobs')}</h3>
+              <p className="text-gray-400 text-sm">
+                {t('footerDescription')}
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">{t('governmentLinks')}</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>
+                  <a href="https://skillindiadigital.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-white flex items-center">
+                    {t('skillIndiaPortal')} <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.india.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-white flex items-center">
+                    {t('indiaGov')} <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.ncs.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-white flex items-center">
+                    {t('nationalCareerService')} <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">{t('quickLinks')}</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-white">{t('aboutUs')}</a></li>
+                <li><a href="#" className="hover:text-white">{t('contactUs')}</a></li>
+                <li><a href="#" className="hover:text-white">{t('privacyPolicy')}</a></li>
+                <li><a href="#" className="hover:text-white">{t('termsOfService')}</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">{t('support')}</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-white">{t('helpCenter')}</a></li>
+                <li><a href="#" className="hover:text-white">{t('faq')}</a></li>
+                <li><a href="#" className="hover:text-white">{t('technicalSupport')}</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+            <p>&copy; 2024 {t('skillIndiaJobs')}. {t('allRightsReserved')}</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

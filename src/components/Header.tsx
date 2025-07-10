@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Globe } from 'lucide-react';
+import { LogOut, User, Globe, Bell } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -18,11 +18,20 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
-    navigate('/');
+    if (user) {
+      navigate(`/dashboard/${user.userType}`);
+    } else {
+      navigate('/');
+    }
   };
 
   const handleProfileClick = () => {
     navigate('/profile');
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -59,23 +68,32 @@ const Header: React.FC = () => {
           </DropdownMenu>
 
           {user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-blue-700">
-                  <User className="w-4 h-4 mr-1" />
-                  {user.name}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={handleProfileClick}>
-                  {t('profile')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={logout}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  {t('logout')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <>
+              <Button variant="ghost" size="sm" className="text-white hover:bg-blue-700 relative">
+                <Bell className="w-4 h-4" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  3
+                </span>
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-white hover:bg-blue-700">
+                    <User className="w-4 h-4 mr-1" />
+                    {user.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleProfileClick}>
+                    {t('profile')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    {t('logout')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
         </div>
       </div>
