@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Users, Briefcase, TrendingUp, Award } from 'lucide-react';
+import { Users, Briefcase, TrendingUp, Award, BookOpen, Certificate, GraduationCap } from 'lucide-react';
+import sampleData from '../data/sampleData.json';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,14 +20,11 @@ const LandingPage: React.FC = () => {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className={`font-bold text-gray-900 mb-4 ${language === 'ta' ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl'}`}>
             {t('welcome')}
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            {language === 'en' 
-              ? 'Connecting skilled professionals with opportunities across India. Build your career with government-backed certification programs.'
-              : 'இந்தியா முழுவதும் திறமையான தொழில் வல்லுநர்களை வாய்ப்புகளுடன் இணைக்கிறது. அரசாங்க ஆதரவுடைய சான்றிதழ் திட்டங்களுடன் உங்கள் தொழிலை உருவாக்குங்கள்.'
-            }
+          <p className={`text-gray-600 mb-8 max-w-3xl mx-auto ${language === 'ta' ? 'text-base md:text-lg' : 'text-lg md:text-xl'}`}>
+            {t('heroDescription')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
@@ -53,70 +51,131 @@ const LandingPage: React.FC = () => {
             <CardContent className="p-4">
               <Users className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <div className="text-2xl font-bold text-gray-900">50K+</div>
-              <div className="text-sm text-gray-600">Job Seekers</div>
+              <div className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                {t('jobSeekers')}
+              </div>
             </CardContent>
           </Card>
           <Card className="text-center">
             <CardContent className="p-4">
               <Briefcase className="w-8 h-8 mx-auto mb-2 text-green-600" />
               <div className="text-2xl font-bold text-gray-900">10K+</div>
-              <div className="text-sm text-gray-600">Jobs Posted</div>
+              <div className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                {t('jobsPosted')}
+              </div>
             </CardContent>
           </Card>
           <Card className="text-center">
             <CardContent className="p-4">
               <TrendingUp className="w-8 h-8 mx-auto mb-2 text-orange-600" />
               <div className="text-2xl font-bold text-gray-900">95%</div>
-              <div className="text-sm text-gray-600">Success Rate</div>
+              <div className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                {t('successRate')}
+              </div>
             </CardContent>
           </Card>
           <Card className="text-center">
             <CardContent className="p-4">
               <Award className="w-8 h-8 mx-auto mb-2 text-purple-600" />
               <div className="text-2xl font-bold text-gray-900">500+</div>
-              <div className="text-sm text-gray-600">Certifications</div>
+              <div className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                {t('certifications')}
+              </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Certifications Section */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className={`font-bold text-gray-900 mb-4 ${language === 'ta' ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'}`}>
+              {t('availableCertifications')}
+            </h2>
+            <p className={`text-gray-600 ${language === 'ta' ? 'text-sm md:text-base' : 'text-base md:text-lg'}`}>
+              {t('certificationDescription')}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sampleData.certifications.map((cert, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center mb-2">
+                    <Certificate className="w-6 h-6 mr-2 text-blue-600" />
+                    <CardTitle className={`${language === 'ta' ? 'text-base' : 'text-lg'}`}>
+                      {cert.name}
+                    </CardTitle>
+                  </div>
+                  <CardDescription className={`${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                    {cert.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                        {t('duration')}:
+                      </span>
+                      <span className={`font-medium ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                        {cert.duration}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className={`text-gray-600 ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                        {t('level')}:
+                      </span>
+                      <span className={`font-medium ${language === 'ta' ? 'text-xs' : 'text-sm'}`}>
+                        {cert.level}
+                      </span>
+                    </div>
+                    <Button size="sm" className="w-full mt-4">
+                      {t('learnMore')}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
 
         {/* Features Section */}
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className={`flex items-center ${language === 'ta' ? 'text-lg' : 'text-xl'}`}>
                 <Users className="w-6 h-6 mr-2 text-blue-600" />
-                For Job Seekers
+                {t('forJobSeekers')}
               </CardTitle>
-              <CardDescription>
-                Find opportunities that match your skills and get certified
+              <CardDescription className={`${language === 'ta' ? 'text-sm' : 'text-base'}`}>
+                {t('jobSeekerDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Access to government-verified job opportunities</li>
-                <li>• Skill-based job matching</li>
-                <li>• Free certification programs</li>
-                <li>• Career guidance and mentorship</li>
+              <ul className={`space-y-2 text-gray-600 ${language === 'ta' ? 'text-sm' : 'text-sm'}`}>
+                <li>• {t('jobSeekerFeature1')}</li>
+                <li>• {t('jobSeekerFeature2')}</li>
+                <li>• {t('jobSeekerFeature3')}</li>
+                <li>• {t('jobSeekerFeature4')}</li>
               </ul>
             </CardContent>
           </Card>
 
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className={`flex items-center ${language === 'ta' ? 'text-lg' : 'text-xl'}`}>
                 <Briefcase className="w-6 h-6 mr-2 text-green-600" />
-                For Employers
+                {t('forEmployers')}
               </CardTitle>
-              <CardDescription>
-                Connect with skilled and certified professionals
+              <CardDescription className={`${language === 'ta' ? 'text-sm' : 'text-base'}`}>
+                {t('employerDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Access to verified skilled workforce</li>
-                <li>• Easy job posting and management</li>
-                <li>• Candidate screening and rating system</li>
-                <li>• Government partnership benefits</li>
+              <ul className={`space-y-2 text-gray-600 ${language === 'ta' ? 'text-sm' : 'text-sm'}`}>
+                <li>• {t('employerFeature1')}</li>
+                <li>• {t('employerFeature2')}</li>
+                <li>• {t('employerFeature3')}</li>
+                <li>• {t('employerFeature4')}</li>
               </ul>
             </CardContent>
           </Card>

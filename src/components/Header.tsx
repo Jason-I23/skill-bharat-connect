@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 import { LogOut, User, Globe } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -14,15 +15,29 @@ import {
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
 
   return (
     <header className="bg-blue-600 text-white p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center space-x-2">
+        <div 
+          className="flex items-center space-x-2 cursor-pointer"
+          onClick={handleLogoClick}
+        >
           <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
             <span className="text-blue-600 font-bold text-sm">SI</span>
           </div>
-          <h1 className="text-lg md:text-xl font-bold">Skill India Jobs</h1>
+          <h1 className={`font-bold ${language === 'ta' ? 'text-lg' : 'text-lg md:text-xl'}`}>
+            {t('skillIndiaJobs')}
+          </h1>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -52,12 +67,12 @@ const Header: React.FC = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleProfileClick}>
                   {t('profile')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={logout}>
                   <LogOut className="w-4 h-4 mr-2" />
-                  Logout
+                  {t('logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
