@@ -116,7 +116,7 @@ const JobSeekerDashboard: React.FC = () => {
                   <p className="text-gray-600">{job.company}</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-green-600">₹{job.salary}</div>
+                  <div className="text-lg font-bold text-green-600">₹{job.payment}</div>
                   <div className="text-sm text-gray-600">{job.paymentType}</div>
                 </div>
               </div>

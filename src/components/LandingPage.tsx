@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Users, Briefcase, TrendingUp, Award, BookOpen, Certificate, GraduationCap } from 'lucide-react';
+import { Users, Briefcase, TrendingUp, Award, BookOpen, GraduationCap } from 'lucide-react';
 import sampleData from '../data/sampleData.json';
 
 const LandingPage: React.FC = () => {
@@ -101,7 +101,7 @@ const LandingPage: React.FC = () => {
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center mb-2">
-                    <Certificate className="w-6 h-6 mr-2 text-blue-600" />
+                    <GraduationCap className="w-6 h-6 mr-2 text-blue-600" />
                     <CardTitle className={`${language === 'ta' ? 'text-base' : 'text-lg'}`}>
                       {cert.name}
                     </CardTitle>
