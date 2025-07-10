@@ -8,7 +8,7 @@ import { Users, Briefcase, TrendingUp, Award } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
   const handleAuthChoice = (action: 'login' | 'register') => {
     navigate(`/auth-choice?action=${action}`);
