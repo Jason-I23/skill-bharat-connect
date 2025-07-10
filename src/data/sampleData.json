@@ -1,0 +1,179 @@
+
+{
+  "ncsUsers": [
+    {
+      "phone": "9876543210",
+      "firstName": "Rahul",
+      "lastName": "Sharma",
+      "middleName": "Kumar",
+      "fatherName": "Rajesh Sharma",
+      "dob": "1995-05-15",
+      "gender": "Male",
+      "state": "Maharashtra",
+      "pincode": "400001",
+      "education": "Graduate",
+      "degree": "B.Tech Computer Science",
+      "email": "rahul.sharma@email.com",
+      "username": "rahul_sharma",
+      "employmentStatus": "Unemployed",
+      "keySkills": "Web Development, JavaScript, React",
+      "internationalJob": true,
+      "userType": "jobSeeker"
+    }
+  ],
+  "educationLevels": [
+    "No schooling",
+    "Upto 9th",
+    "10th pass",
+    "12th pass",
+    "Diploma after 10th",
+    "Diploma after 12th",
+    "Graduate"
+  ],
+  "diplomaAfter10th": [
+    "Plumber",
+    "Assistant in plumbing and sanitary work",
+    "Helper - shuttering carpenter",
+    "Carpenter",
+    "Painter"
+  ],
+  "diplomaAfter12th": [
+    "Diploma in General Nursing Midwifery - DGNM",
+    "Diploma in Elementary Education - D.EI.ED",
+    "Diploma in Computer Applications",
+    "Diploma in Electronics & Communication"
+  ],
+  "graduateDegrees": [
+    "B.Tech Computer Science",
+    "B.Tech Mechanical Engineering",
+    "B.Tech Electrical Engineering",
+    "B.Com",
+    "B.A",
+    "B.Sc",
+    "BBA",
+    "B.Ed"
+  ],
+  "states": [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+    "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+    "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+    "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Plumber Required",
+      "description": "Need experienced plumber for residential work",
+      "location": "Mumbai, Maharashtra",
+      "type": "weekly",
+      "payment": 2500,
+      "skills": ["Plumbing", "Pipe fitting"],
+      "rating": 4.5,
+      "applicants": 12,
+      "recruited": 2,
+      "maxPositions": 3,
+      "providerId": "provider1",
+      "providerName": "Home Services Co.",
+      "tools": "Basic plumbing tools",
+      "postedDate": "2024-01-10"
+    },
+    {
+      "id": 2,
+      "title": "Web Developer",
+      "description": "React.js developer for e-commerce project",
+      "location": "Bangalore, Karnataka",
+      "type": "monthly",
+      "payment": 45000,
+      "skills": ["React", "JavaScript", "Node.js"],
+      "rating": 4.8,
+      "applicants": 25,
+      "recruited": 1,
+      "maxPositions": 2,
+      "providerId": "provider2",
+      "providerName": "Tech Solutions Pvt Ltd",
+      "tools": "Laptop, Internet connection",
+      "postedDate": "2024-01-08"
+    },
+    {
+      "id": 3,
+      "title": "Carpenter Assistant",
+      "description": "Helper required for furniture making",
+      "location": "Delhi",
+      "type": "hourly",
+      "payment": 200,
+      "skills": ["Carpentry", "Wood work"],
+      "rating": 4.2,
+      "applicants": 8,
+      "recruited": 0,
+      "maxPositions": 2,
+      "providerId": "provider3",
+      "providerName": "Wood Craft Industries",
+      "tools": "Hand tools provided",
+      "postedDate": "2024-01-12"
+    }
+  ],
+  "candidates": [
+    {
+      "id": 1,
+      "name": "Rahul Sharma",
+      "skills": ["Web Development", "JavaScript", "React"],
+      "experience": "2 years",
+      "rating": 4.7,
+      "location": "Mumbai",
+      "category": "excellent",
+      "phone": "9876543210",
+      "email": "rahul.sharma@email.com"
+    },
+    {
+      "id": 2,
+      "name": "Priya Patel",
+      "skills": ["Plumbing", "Pipe fitting"],
+      "experience": "5 years",
+      "rating": 4.5,
+      "location": "Mumbai",
+      "category": "good",
+      "phone": "9876543211",
+      "email": "priya.patel@email.com"
+    },
+    {
+      "id": 3,
+      "name": "Amit Singh",
+      "skills": ["Carpentry", "Wood work"],
+      "experience": "3 years",
+      "rating": 3.8,
+      "location": "Delhi",
+      "category": "bad",
+      "phone": "9876543212",
+      "email": "amit.singh@email.com"
+    }
+  ],
+  "translations": {
+    "en": {
+      "welcome": "Welcome to Skill India Job Portal",
+      "login": "Login",
+      "register": "Register",
+      "jobSeeker": "Job Seeker",
+      "jobProvider": "Job Provider",
+      "dashboard": "Dashboard",
+      "profile": "Profile",
+      "appliedJobs": "Applied Jobs",
+      "availableJobs": "Available Jobs",
+      "createJob": "Create Job",
+      "manageJobs": "Manage Jobs"
+    },
+    "ta": {
+      "welcome": "திறமை இந்தியா வேலைவாய்ப்பு போர்ட்டலுக்கு வரவேற்கிறோம்",
+      "login": "உள்நுழைய",
+      "register": "பதிவு செய்ய",
+      "jobSeeker": "வேலை தேடுபவர்",
+      "jobProvider": "வேலை வழங்குபவர்",
+      "dashboard": "டாஷ்போர்டு",
+      "profile": "சுயவிவரம்",
+      "appliedJobs": "விண்ணப்பித்த வேலைகள்",
+      "availableJobs": "கிடைக்கும் வேலைகள்",
+      "createJob": "வேலை உருவாக்க",
+      "manageJobs": "வேலைகளை நிர்வகிக்க"
+    }
+  }
+}
