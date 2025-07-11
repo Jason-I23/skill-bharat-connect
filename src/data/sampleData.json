@@ -144,8 +144,24 @@
     "B.E/B.Tech", "B.Sc", "B.Com", "B.A", "BBA", "BCA", "B.Arch", "MBBS", "BDS"
   ],
   "ncsUsers": [
-    { "id": "ncs_001", "name": "Rajesh Kumar", "phone": "9876543210", "skills": "Plumbing" },
-    { "id": "ncs_002", "name": "Priya Sharma", "phone": "9876543211", "skills": "Electrical" }
+    { 
+      "id": "ncs_001", 
+      "name": "Rajesh Kumar", 
+      "firstName": "Rajesh",
+      "lastName": "Kumar",
+      "email": "rajesh.kumar@email.com",
+      "phone": "9876543210", 
+      "skills": "Plumbing" 
+    },
+    { 
+      "id": "ncs_002", 
+      "name": "Priya Sharma", 
+      "firstName": "Priya",
+      "lastName": "Sharma",
+      "email": "priya.sharma@email.com",
+      "phone": "9876543211", 
+      "skills": "Electrical" 
+    }
   ],
   "resumeTemplate": {
     "name": "Rajesh Kumar",
