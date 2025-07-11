@@ -1,258 +1,304 @@
-
 {
   "states": [
-    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", 
-    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", 
-    "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", 
-    "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", 
-    "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", 
-    "Delhi", "Puducherry", "Jammu and Kashmir", "Ladakh"
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal"
   ],
   "districts": [
-    "Chennai", "Mumbai", "Bengaluru", "Delhi", "Hyderabad", "Kolkata", "Pune", 
-    "Ahmedabad", "Jaipur", "Surat", "Lucknow", "Kanpur", "Nagpur", "Indore", 
-    "Thane", "Bhopal", "Visakhapatnam", "Pimpri-Chinchwad", "Patna", "Vadodara", 
-    "Ghaziabad", "Ludhiana", "Agra", "Nashik", "Faridabad", "Meerut", "Rajkot", 
-    "Kalyan-Dombivali", "Vasai-Virar", "Varanasi", "Srinagar", "Aurangabad", 
-    "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad", "Ranchi", "Howrah", 
-    "Coimbatore", "Jabalpur", "Gwalior", "Vijayawada", "Jodhpur", "Madurai", 
-    "Raipur", "Kota", "Chandigarh", "Guwahati", "Solapur", "Hubli-Dharwad", 
-    "Tiruchirappalli", "Bareilly", "Mysore", "Tiruppur", "Gurgaon", "Aligarh", 
-    "Jalandhar", "Bhubaneswar", "Salem", "Warangal", "Mira-Bhayandar", "Thiruvananthapuram"
+    "Chennai",
+    "Coimbatore",
+    "Madurai",
+    "Salem",
+    "Tiruchirappalli",
+    "Tirunelveli",
+    "Vellore",
+    "Erode",
+    "Thanjavur",
+    "Dindigul"
   ],
   "skillCategories": [
-    "Plumbing", "Electrical Work", "Carpentry", "Masonry", "Painting", "Welding", 
-    "HVAC", "Roofing", "Flooring", "Landscaping", "Auto Repair", "Appliance Repair", 
-    "Computer Repair", "Mobile Repair", "Tailoring", "Beauty Services", "Cooking", 
-    "Cleaning Services", "Security Services", "Delivery Services", "Construction", 
-    "Interior Design", "Photography", "Videography", "Graphic Design", "Web Development", 
-    "Data Entry", "Translation", "Tutoring", "Fitness Training", "Healthcare Assistance"
+    "Construction & Building",
+    "Electrical & Electronics",
+    "Plumbing & Water Systems",
+    "Automotive & Mechanical",
+    "Carpentry & Woodwork",
+    "Painting & Decoration",
+    "Welding & Metal Work",
+    "Tailoring & Textiles",
+    "Beauty & Wellness",
+    "Food & Hospitality",
+    "Agriculture & Farming",
+    "Healthcare Support",
+    "IT & Digital Services",
+    "Transportation & Logistics"
   ],
   "educationLevels": [
-    { "value": "below-10th", "label": "Below 10th" },
-    { "value": "10th-pass", "label": "10th Pass" },
-    { "value": "12th-pass", "label": "12th Pass" },
-    { "value": "diploma-after-10th", "label": "Diploma (After 10th)" },
-    { "value": "diploma-after-12th", "label": "Diploma (After 12th)" },
-    { "value": "iti", "label": "ITI" },
+    { "value": "below10th", "label": "Below 10th Standard" },
+    { "value": "10th", "label": "10th Standard" },
+    { "value": "12th", "label": "12th Standard" },
+    { "value": "diploma", "label": "Diploma" },
     { "value": "graduate", "label": "Graduate" },
-    { "value": "post-graduate", "label": "Post Graduate" }
+    { "value": "postgraduate", "label": "Post Graduate" }
   ],
   "diplomaAfter10th": [
-    "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Computer Science", 
-    "Electronics", "Automobile Engineering", "Architecture", "Fashion Design", "Interior Design", 
-    "Hotel Management", "Tourism", "Agriculture", "Pharmacy", "Medical Laboratory Technology"
+    "Electrical Engineering",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Computer Science",
+    "Electronics",
+    "Automobile Engineering",
+    "Plumbing Technology",
+    "Carpentry & Furniture Making",
+    "Welding Technology",
+    "Fashion Design"
   ],
   "diplomaAfter12th": [
-    "Mechanical Engineering", "Electrical Engineering", "Civil Engineering", "Computer Science", 
-    "Electronics & Communication", "Chemical Engineering", "Textile Engineering", "Architecture", 
-    "Fashion Design", "Interior Design", "Hotel Management", "Mass Communication", "Animation", 
-    "Graphic Design", "Web Design", "Digital Marketing", "Pharmacy", "Medical Laboratory Technology", 
-    "Nursing", "Physiotherapy", "Agriculture", "Horticulture", "Forestry", "Dairy Technology"
+    "Engineering Diploma",
+    "Hotel Management",
+    "Fashion Technology",
+    "Interior Design",
+    "Computer Applications",
+    "Medical Laboratory Technology",
+    "Pharmacy",
+    "Nursing",
+    "Agriculture Technology",
+    "Business Administration"
   ],
   "graduateDegrees": [
-    "B.E/B.Tech", "B.Sc", "B.Com", "B.A", "BBA", "BCA", "B.Arch", "MBBS", "BDS"
+    "Bachelor of Arts (BA)",
+    "Bachelor of Science (BSc)",
+    "Bachelor of Commerce (BCom)",
+    "Bachelor of Engineering (BE)",
+    "Bachelor of Technology (BTech)",
+    "Bachelor of Business Administration (BBA)",
+    "Bachelor of Computer Applications (BCA)",
+    "Bachelor of Education (BEd)",
+    "Bachelor of Medicine (MBBS)",
+    "Bachelor of Law (LLB)"
   ],
+  "resumeParsingResult": {
+    "firstName": "Rajesh",
+    "middleName": "Kumar",
+    "lastName": "Singh",
+    "email": "rajesh.singh@email.com",
+    "phone": "9876543210",
+    "state": "Tamil Nadu",
+    "pincode": "600001",
+    "education": "diploma",
+    "keySkills": "Plumbing, Pipe Fitting, Water Systems Installation",
+    "employmentStatus": "unemployed"
+  },
   "ncsUsers": [
-    { 
-      "id": "ncs_001", 
-      "name": "Rajesh Kumar", 
-      "firstName": "Rajesh",
-      "lastName": "Kumar",
-      "email": "rajesh.kumar@email.com",
-      "phone": "9876543210", 
-      "skills": "Plumbing" 
+    {
+      "id": "ncs_001",
+      "name": "Rajesh Kumar",
+      "email": "rajesh.kumar@ncs.gov.in",
+      "phone": "9876543210",
+      "userType": "jobSeeker",
+      "skills": ["Plumbing", "Electrical Work"],
+      "location": "Chennai, Tamil Nadu",
+      "experience": "5 years",
+      "rating": 4.5,
+      "verified": true,
+      "registrationDate": "2024-01-15"
     },
-    { 
-      "id": "ncs_002", 
-      "name": "Priya Sharma", 
-      "firstName": "Priya",
-      "lastName": "Sharma",
-      "email": "priya.sharma@email.com",
-      "phone": "9876543211", 
-      "skills": "Electrical" 
+    {
+      "id": "ncs_002",
+      "name": "Priya Sharma",
+      "email": "priya.sharma@ncs.gov.in",
+      "phone": "9123456789",
+      "userType": "jobSeeker",
+      "skills": ["Tailoring", "Fashion Design"],
+      "location": "Mumbai, Maharashtra",
+      "experience": "3 years",
+      "rating": 4.2,
+      "verified": true,
+      "registrationDate": "2024-01-10"
+    },
+    {
+      "id": "ncs_003",
+      "name": "Tech Solutions Pvt Ltd",
+      "email": "hr@techsolutions.com",
+      "phone": "9988776655",
+      "userType": "jobProvider",
+      "industry": "Technology",
+      "location": "Bangalore, Karnataka",
+      "companySize": "51-200",
+      "verified": true,
+      "registrationDate": "2024-01-05"
     }
   ],
   "resumeTemplate": {
-    "name": "Rajesh Kumar",
-    "email": "rajesh.kumar@email.com",
-    "phone": "9876543210",
-    "location": "Chennai",
-    "skills": ["Plumbing", "Pipe Fitting", "Water System Installation", "Bathroom Fitting"],
-    "experience": [
+    "personalInfo": {
+      "name": "",
+      "email": "",
+      "phone": "",
+      "address": "",
+      "dateOfBirth": "",
+      "gender": ""
+    },
+    "education": [
       {
-        "company": "City Plumbing Services",
-        "position": "Senior Plumber",
-        "duration": "2020-2023",
-        "description": "Handled residential and commercial plumbing installations and repairs"
-      },
-      {
-        "company": "Home Fix Solutions",
-        "position": "Plumber",
-        "duration": "2018-2020",
-        "description": "Provided plumbing services for apartments and individual homes"
+        "degree": "",
+        "institution": "",
+        "year": "",
+        "percentage": ""
       }
     ],
-    "education": "ITI in Plumbing",
-    "certifications": ["Certified Plumber", "Water System Installation Certified"],
-    "languages": ["Tamil", "Hindi", "English"],
-    "availability": "Full-time"
+    "experience": [
+      {
+        "jobTitle": "",
+        "company": "",
+        "duration": "",
+        "responsibilities": []
+      }
+    ],
+    "skills": [],
+    "certifications": [
+      {
+        "name": "",
+        "issuedBy": "",
+        "date": ""
+      }
+    ],
+    "languages": []
   },
   "jobs": [
     {
-      "id": "job_1",
-      "title": "Residential Plumber",
-      "company": "Chennai Home Services",
+      "id": "job_001",
+      "title": "Residential Plumber Required",
+      "company": "Home Services Co.",
       "location": "Chennai, Tamil Nadu",
-      "type": "Full-time",
-      "payment": 25000,
+      "workType": "plumbing",
+      "description": "Looking for experienced plumber for residential plumbing work including pipe installation and repairs.",
+      "requirements": ["2+ years experience", "Own tools preferred", "Local area knowledge"],
+      "salary": "₹15,000 - ₹25,000",
       "paymentType": "monthly",
-      "description": "Looking for experienced plumber for residential projects. Must have 3+ years experience in pipe fitting and bathroom installations.",
-      "skills": ["Plumbing", "Pipe Fitting", "Bathroom Installation"],
-      "tools": "Own tools preferred",
-      "rating": 4.2,
+      "postedDate": "2024-01-15",
+      "deadline": "2024-02-15",
+      "status": "active",
       "applicants": 12,
-      "recruited": 2,
-      "tags": ["verified_job", "skill_match"],
-      "skillMatch": 95
+      "contactInfo": {
+        "phone": "9876543210",
+        "email": "jobs@homeservices.com"
+      }
     },
     {
-      "id": "job_2",
+      "id": "job_002",
+      "title": "Carpenter for Furniture Making",
+      "company": "Wood Craft Industries",
+      "location": "Coimbatore, Tamil Nadu",
+      "workType": "carpentry",
+      "description": "Skilled carpenter needed for custom furniture manufacturing. Must have experience with modern woodworking tools.",
+      "requirements": ["3+ years experience", "Knowledge of modern tools", "Quality focused"],
+      "salary": "₹18,000 - ₹30,000",
+      "paymentType": "monthly",
+      "postedDate": "2024-01-12",
+      "deadline": "2024-02-12",
+      "status": "active",
+      "applicants": 8,
+      "contactInfo": {
+        "phone": "9123456789",
+        "email": "hr@woodcraft.com"
+      }
+    },
+    {
+      "id": "job_003",
       "title": "Electrical Technician",
       "company": "Power Solutions Ltd",
-      "location": "Mumbai, Maharashtra",
-      "type": "Part-time",
-      "payment": 800,
-      "paymentType": "daily",
-      "description": "Electrical maintenance and repair work for commercial buildings. Safety certification required.",
-      "skills": ["Electrical Work", "Wiring", "Safety Protocols"],
-      "tools": "Company provided",
-      "rating": 4.5,
-      "applicants": 18,
-      "recruited": 1,
-      "tags": ["high_paying", "verified_job"],
-      "skillMatch": 78
-    },
-    {
-      "id": "job_3",
-      "title": "Carpenter - Furniture Making",
-      "company": "Wood Craft Studio",
-      "location": "Bengaluru, Karnataka",
-      "type": "Project-based",
-      "payment": 35000,
-      "paymentType": "fixed",
-      "description": "Custom furniture making project. Experience in modern furniture design preferred.",
-      "skills": ["Carpentry", "Wood Working", "Furniture Design"],
-      "tools": "Workshop provided",
-      "rating": 4.7,
-      "applicants": 8,
-      "recruited": 0,
-      "tags": ["high_paying", "skill_match"],
-      "skillMatch": 85
-    },
-    {
-      "id": "job_4",
-      "title": "House Painter",
-      "company": "Color Perfect",
-      "location": "Delhi, NCR",
-      "type": "Full-time",
-      "payment": 22000,
+      "location": "Bangalore, Karnataka",
+      "workType": "electrical",
+      "description": "Electrical technician required for industrial electrical maintenance and installation work.",
+      "requirements": ["ITI in Electrical", "Safety certification", "Industrial experience"],
+      "salary": "₹20,000 - ₹35,000",
       "paymentType": "monthly",
-      "description": "Interior and exterior painting for residential projects. Must have own brushes and basic tools.",
-      "skills": ["Painting", "Surface Preparation", "Color Mixing"],
-      "tools": "Basic tools required",
-      "rating": 4.0,
+      "postedDate": "2024-01-10",
+      "deadline": "2024-02-10",
+      "status": "active",
       "applicants": 15,
-      "recruited": 3,
-      "tags": ["verified_job"],
-      "skillMatch": 72
-    },
-    {
-      "id": "job_5",
-      "title": "AC Technician",
-      "company": "Cool Air Services",
-      "location": "Hyderabad, Telangana",
-      "type": "Full-time",
-      "payment": 28000,
-      "paymentType": "monthly",
-      "description": "Installation and maintenance of air conditioning systems. Certification in HVAC preferred.",
-      "skills": ["HVAC", "AC Repair", "Refrigeration"],
-      "tools": "Company provided",
-      "rating": 4.3,
-      "applicants": 22,
-      "recruited": 1,
-      "tags": ["high_paying", "verified_job", "skill_match"],
-      "skillMatch": 88
+      "contactInfo": {
+        "phone": "9988776655",
+        "email": "careers@powersolutions.com"
+      }
     }
   ],
   "jobApplicationProgress": [
     {
-      "jobId": "job_1",
-      "jobTitle": "Residential Plumber",
-      "company": "Chennai Home Services",
-      "jobLocation": "Chennai, Tamil Nadu",
-      "salary": 25000,
-      "appliedDate": "2024-01-15",
-      "currentStage": 2,
-      "nextUpdateDate": "2024-01-25",
-      "jobDescription": "Looking for experienced plumber for residential projects. Must have 3+ years experience in pipe fitting and bathroom installations.",
-      "requirements": ["3+ years experience", "Pipe fitting", "Bathroom installation", "Own tools preferred"],
-      "notes": "Application under review by hiring manager. Expected response by next week.",
+      "jobId": "job_001",
+      "userId": "ncs_001",
+      "status": "applied",
+      "appliedDate": "2024-01-16",
       "stages": [
-        { "name": "Applied", "completed": true, "date": "2024-01-15" },
-        { "name": "Application Review", "completed": true, "date": "2024-01-18" },
-        { "name": "Shortlisted", "completed": false, "date": null },
-        { "name": "Document Verification", "completed": false, "date": null },
-        { "name": "Job Offer", "completed": false, "date": null },
-        { "name": "Job In Progress", "completed": false, "date": null },
-        { "name": "Completed", "completed": false, "date": null },
-        { "name": "Payment Completed", "completed": false, "date": null }
+        {
+          "stage": "application_submitted",
+          "date": "2024-01-16",
+          "status": "completed"
+        },
+        {
+          "stage": "profile_review",
+          "date": "2024-01-17",
+          "status": "in_progress"
+        },
+        {
+          "stage": "interview_scheduled",
+          "status": "pending"
+        },
+        {
+          "stage": "final_selection",
+          "status": "pending"
+        }
       ]
     },
     {
-      "jobId": "job_3",
-      "jobTitle": "Carpenter - Furniture Making",
-      "company": "Wood Craft Studio",
-      "jobLocation": "Bengaluru, Karnataka",
-      "salary": 35000,
-      "appliedDate": "2024-01-10",
-      "currentStage": 4,
-      "nextUpdateDate": "2024-01-30",
-      "jobDescription": "Custom furniture making project. Experience in modern furniture design preferred.",
-      "requirements": ["Carpentry skills", "Wood working", "Modern furniture design", "Workshop tools"],
-      "notes": "Job offer received! Starting date confirmed for next month.",
+      "jobId": "job_002",
+      "userId": "ncs_001",
+      "status": "shortlisted",
+      "appliedDate": "2024-01-14",
       "stages": [
-        { "name": "Applied", "completed": true, "date": "2024-01-10" },
-        { "name": "Application Review", "completed": true, "date": "2024-01-12" },
-        { "name": "Shortlisted", "completed": true, "date": "2024-01-15" },
-        { "name": "Document Verification", "completed": true, "date": "2024-01-18" },
-        { "name": "Job Offer", "completed": true, "date": "2024-01-20" },
-        { "name": "Job In Progress", "completed": false, "date": null },
-        { "name": "Completed", "completed": false, "date": null },
-        { "name": "Payment Completed", "completed": false, "date": null }
-      ]
-    },
-    {
-      "jobId": "job_2",
-      "jobTitle": "Electrical Technician",
-      "company": "Power Solutions Ltd",
-      "jobLocation": "Mumbai, Maharashtra",
-      "salary": 24000,
-      "appliedDate": "2023-12-01",
-      "currentStage": 7,
-      "nextUpdateDate": null,
-      "jobDescription": "Electrical maintenance and repair work for commercial buildings. Safety certification required.",
-      "requirements": ["Electrical work experience", "Wiring skills", "Safety protocols", "Certification"],
-      "notes": "Job completed successfully! Payment processed and received.",
-      "stages": [
-        { "name": "Applied", "completed": true, "date": "2023-12-01" },
-        { "name": "Application Review", "completed": true, "date": "2023-12-03" },
-        { "name": "Shortlisted", "completed": true, "date": "2023-12-05" },
-        { "name": "Document Verification", "completed": true, "date": "2023-12-08" },
-        { "name": "Job Offer", "completed": true, "date": "2023-12-10" },
-        { "name": "Job In Progress", "completed": true, "date": "2023-12-15" },
-        { "name": "Completed", "completed": true, "date": "2024-01-15" },
-        { "name": "Payment Completed", "completed": true, "date": "2024-01-18" }
+        {
+          "stage": "application_submitted",
+          "date": "2024-01-14",
+          "status": "completed"
+        },
+        {
+          "stage": "profile_review",
+          "date": "2024-01-15",
+          "status": "completed"
+        },
+        {
+          "stage": "interview_scheduled",
+          "date": "2024-01-18",
+          "status": "completed"
+        },
+        {
+          "stage": "final_selection",
+          "status": "in_progress"
+        }
       ]
     }
   ]

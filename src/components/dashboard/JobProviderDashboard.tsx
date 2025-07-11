@@ -88,10 +88,11 @@ const JobProviderDashboard: React.FC = () => {
     }
   ]);
 
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showCreateJobModal, setShowCreateJobModal] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [selectedJobForCandidates, setSelectedJobForCandidates] = useState<Job | null>(null);
   const [selectedJobForCompletion, setSelectedJobForCompletion] = useState<Job | null>(null);
+  const [selectedCandidateProfile, setSelectedCandidateProfile] = useState<Candidate | null>(null);
   const [showStatsModal, setShowStatsModal] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
@@ -169,7 +170,7 @@ const JobProviderDashboard: React.FC = () => {
       salary: '',
       paymentType: 'hourly'
     });
-    setShowCreateForm(false);
+    setShowCreateJobModal(false);
     toast({
       title: "Success",
       description: "Job posted successfully!",
@@ -187,7 +188,7 @@ const JobProviderDashboard: React.FC = () => {
       salary: job.salary,
       paymentType: job.paymentType
     });
-    setShowCreateForm(true);
+    setShowCreateJobModal(true);
   };
 
   const handleUpdateJob = () => {
@@ -199,7 +200,7 @@ const JobProviderDashboard: React.FC = () => {
         : job
     ));
     setEditingJob(null);
-    setShowCreateForm(false);
+    setShowCreateJobModal(false);
     setFormData({
       title: '',
       description: '',
