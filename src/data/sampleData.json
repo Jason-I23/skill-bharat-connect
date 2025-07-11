@@ -195,57 +195,81 @@
   },
   "jobs": [
     {
-      "id": "job_001",
+      "id": "job_1",
       "title": "Residential Plumber Required",
       "company": "Home Services Co.",
       "location": "Chennai, Tamil Nadu",
       "workType": "plumbing",
+      "type": "Full-time",
       "description": "Looking for experienced plumber for residential plumbing work including pipe installation and repairs.",
       "requirements": ["2+ years experience", "Own tools preferred", "Local area knowledge"],
       "salary": "₹15,000 - ₹25,000",
+      "payment": 20000,
       "paymentType": "monthly",
       "postedDate": "2024-01-15",
       "deadline": "2024-02-15",
       "status": "active",
       "applicants": 12,
+      "recruited": 2,
+      "rating": 4.2,
+      "skills": ["Plumbing", "Pipe Installation", "Water Systems"],
+      "tools": "Basic plumbing tools, pipe wrench, soldering kit",
+      "tags": ["verified_job", "skill_match"],
+      "skillMatch": 85,
       "contactInfo": {
         "phone": "9876543210",
         "email": "jobs@homeservices.com"
       }
     },
     {
-      "id": "job_002",
+      "id": "job_2",
       "title": "Carpenter for Furniture Making",
       "company": "Wood Craft Industries",
       "location": "Coimbatore, Tamil Nadu",
       "workType": "carpentry",
+      "type": "Contract",
       "description": "Skilled carpenter needed for custom furniture manufacturing. Must have experience with modern woodworking tools.",
       "requirements": ["3+ years experience", "Knowledge of modern tools", "Quality focused"],
       "salary": "₹18,000 - ₹30,000",
+      "payment": 24000,
       "paymentType": "monthly",
       "postedDate": "2024-01-12",
       "deadline": "2024-02-12",
       "status": "active",
       "applicants": 8,
+      "recruited": 1,
+      "rating": 4.5,
+      "skills": ["Carpentry", "Furniture Making", "Woodworking"],
+      "tools": "Power tools, hand tools, measuring equipment",
+      "tags": ["high_paying", "verified_job"],
+      "skillMatch": 92,
       "contactInfo": {
         "phone": "9123456789",
         "email": "hr@woodcraft.com"
       }
     },
     {
-      "id": "job_003",
+      "id": "job_3",
       "title": "Electrical Technician",
       "company": "Power Solutions Ltd",
       "location": "Bangalore, Karnataka",
       "workType": "electrical",
+      "type": "Full-time",
       "description": "Electrical technician required for industrial electrical maintenance and installation work.",
       "requirements": ["ITI in Electrical", "Safety certification", "Industrial experience"],
       "salary": "₹20,000 - ₹35,000",
+      "payment": 27500,
       "paymentType": "monthly",
       "postedDate": "2024-01-10",
       "deadline": "2024-02-10",
       "status": "active",
       "applicants": 15,
+      "recruited": 3,
+      "rating": 4.3,
+      "skills": ["Electrical Work", "Industrial Maintenance", "Safety Protocols"],
+      "tools": "Multimeter, electrical tools, safety equipment",
+      "tags": ["verified_job", "high_paying"],
+      "skillMatch": 78,
       "contactInfo": {
         "phone": "9988776655",
         "email": "careers@powersolutions.com"
@@ -254,7 +278,7 @@
   ],
   "jobApplicationProgress": [
     {
-      "jobId": "job_001",
+      "jobId": "job_1",
       "userId": "ncs_001",
       "jobTitle": "Residential Plumber Required",
       "company": "Home Services Co.",
@@ -301,7 +325,7 @@
       ]
     },
     {
-      "jobId": "job_002",
+      "jobId": "job_2",
       "userId": "ncs_001",
       "jobTitle": "Carpenter for Furniture Making",
       "company": "Wood Craft Industries",
@@ -348,7 +372,7 @@
       ]
     },
     {
-      "jobId": "job_003",
+      "jobId": "job_3",
       "userId": "ncs_001",
       "jobTitle": "Electrical Technician",
       "company": "Power Solutions Ltd",
