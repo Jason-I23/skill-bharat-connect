@@ -8,8 +8,10 @@ import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { CheckboxDropdown } from '../ui/checkbox-dropdown';
+import { JobApplicationsModal } from '../JobApplicationsModal';
+import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X, Shield, TrendingUp, Award } from 'lucide-react';
 import { toast } from 'sonner';
 import sampleData from '../../data/sampleData.json';
 
@@ -19,14 +21,16 @@ const JobSeekerDashboard: React.FC = () => {
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<string[]>(['job_1', 'job_3']);
   const [filters, setFilters] = useState({
-    location: '',
-    skill: '',
+    locations: [] as string[],
+    skills: [] as string[],
     type: '',
     minPayment: '',
     rating: ''
   });
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [showApplicationsModal, setShowApplicationsModal] = useState(false);
+  const [applicationsModalType, setApplicationsModalType] = useState<'applied' | 'completed' | 'inProgress'>('applied');
 
   const completedJobs = ['job_2'];
   const inProgressJobs = ['job_1'];
@@ -47,7 +51,7 @@ const JobSeekerDashboard: React.FC = () => {
   const handleApplyJob = (jobId: string) => {
     if (!appliedJobs.includes(jobId)) {
       setAppliedJobs(prev => [...prev, jobId]);
-      toast.success('Applied for job successfully!');
+      toast.success(t('applied'));
     }
     setShowJobDialog(false);
   };
@@ -59,18 +63,26 @@ const JobSeekerDashboard: React.FC = () => {
 
   const clearFilters = () => {
     setFilters({
-      location: '',
-      skill: '',
+      locations: [],
+      skills: [],
       type: '',
       minPayment: '',
       rating: ''
     });
   };
 
+  const handleStatsClick = (type: 'applied' | 'completed' | 'inProgress') => {
+    setApplicationsModalType(type);
+    setShowApplicationsModal(true);
+  };
+
   const filteredJobs = sampleData.jobs.filter(job => {
+    // Remove completed jobs from available jobs
+    if (completedJobs.includes(job.id)) return false;
+    
     return (
-      (!filters.location || job.location.toLowerCase().includes(filters.location.toLowerCase())) &&
-      (!filters.skill || job.skills.some(skill => skill.toLowerCase().includes(filters.skill.toLowerCase()))) &&
+      (filters.locations.length === 0 || filters.locations.some(loc => job.location.toLowerCase().includes(loc.toLowerCase()))) &&
+      (filters.skills.length === 0 || filters.skills.some(skill => job.skills.some(jobSkill => jobSkill.toLowerCase().includes(skill.toLowerCase())))) &&
       (!filters.type || job.paymentType === filters.type) &&
       (!filters.minPayment || job.payment >= parseInt(filters.minPayment)) &&
       (!filters.rating || job.rating >= parseFloat(filters.rating))
@@ -84,6 +96,24 @@ const JobSeekerDashboard: React.FC = () => {
     return 'available';
   };
 
+  const getJobTagIcon = (tag: string) => {
+    switch (tag) {
+      case 'verified_job': return <Shield className="w-3 h-3" />;
+      case 'high_paying': return <TrendingUp className="w-3 h-3" />;
+      case 'skill_match': return <Award className="w-3 h-3" />;
+      default: return null;
+    }
+  };
+
+  const getJobTagLabel = (tag: string) => {
+    switch (tag) {
+      case 'verified_job': return t('verified_job');
+      case 'high_paying': return t('high_paying');
+      case 'skill_match': return `${t('skill_match')}`;
+      default: return tag;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-6 space-y-6">
@@ -94,25 +124,25 @@ const JobSeekerDashboard: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white shadow-md">
+          <Card className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStatsClick('applied')}>
             <CardContent className="p-4 text-center">
               <Briefcase className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <div className="text-2xl font-bold">{stats.applied}</div>
-              <div className="text-sm text-gray-600">Jobs Applied</div>
+              <div className="text-sm text-gray-600">{t('jobs_applied')}</div>
             </CardContent>
           </Card>
-          <Card className="bg-white shadow-md">
+          <Card className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStatsClick('completed')}>
             <CardContent className="p-4 text-center">
               <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
               <div className="text-2xl font-bold">{stats.completed}</div>
-              <div className="text-sm text-gray-600">Jobs Completed</div>
+              <div className="text-sm text-gray-600">{t('jobs_completed')}</div>
             </CardContent>
           </Card>
-          <Card className="bg-white shadow-md">
+          <Card className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStatsClick('inProgress')}>
             <CardContent className="p-4 text-center">
               <Clock className="w-8 h-8 mx-auto mb-2 text-orange-600" />
               <div className="text-2xl font-bold">{stats.inProgress}</div>
-              <div className="text-sm text-gray-600">In Progress</div>
+              <div className="text-sm text-gray-600">{t('jobs_in_progress')}</div>
             </CardContent>
           </Card>
           <Card className="bg-white shadow-md">
@@ -130,7 +160,7 @@ const JobSeekerDashboard: React.FC = () => {
             <div className="flex justify-between items-center">
               <CardTitle className="flex items-center gap-2">
                 <Filter className="w-5 h-5" />
-                Job Filters
+                {t('job_filters')}
               </CardTitle>
               <Button variant="outline" size="sm" onClick={clearFilters}>
                 <X className="w-4 h-4 mr-2" />
@@ -141,21 +171,23 @@ const JobSeekerDashboard: React.FC = () => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <div>
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  placeholder="Search location"
-                  value={filters.location}
-                  onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+                <Label htmlFor="location">{t('location')}</Label>
+                <CheckboxDropdown
+                  options={sampleData.districts}
+                  selectedValues={filters.locations}
+                  onSelectionChange={(values) => setFilters(prev => ({ ...prev, locations: values }))}
+                  placeholder="Select locations"
+                  className="w-full"
                 />
               </div>
               <div>
-                <Label htmlFor="skill">Skill</Label>
-                <Input
-                  id="skill"
-                  placeholder="Search skill"
-                  value={filters.skill}
-                  onChange={(e) => setFilters(prev => ({ ...prev, skill: e.target.value }))}
+                <Label htmlFor="skill">{t('skills')}</Label>
+                <CheckboxDropdown
+                  options={sampleData.skillCategories}
+                  selectedValues={filters.skills}
+                  onSelectionChange={(values) => setFilters(prev => ({ ...prev, skills: values }))}
+                  placeholder="Select skills"
+                  className="w-full"
                 />
               </div>
               <div>
@@ -201,11 +233,11 @@ const JobSeekerDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Available Jobs Grid */}
+        {/* Recommended Jobs Grid */}
         <Card className="bg-white shadow-md">
           <CardHeader>
-            <CardTitle>Available Jobs ({filteredJobs.length})</CardTitle>
-            <CardDescription>Jobs matching your filters</CardDescription>
+            <CardTitle>{t('recommended_jobs')} ({filteredJobs.length})</CardTitle>
+            <CardDescription>Jobs matching your profile and filters</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -239,6 +271,22 @@ const JobSeekerDashboard: React.FC = () => {
                       </Badge>
                     </div>
 
+                    {/* Job Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {job.tags?.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {getJobTagIcon(tag)}
+                          <span className="ml-1">{getJobTagLabel(tag)}</span>
+                        </Badge>
+                      ))}
+                      {job.skillMatch && (
+                        <Badge variant="secondary" className="text-xs">
+                          <Award className="w-3 h-3 mr-1" />
+                          {job.skillMatch}% Match
+                        </Badge>
+                      )}
+                    </div>
+
                     <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
 
                     <div className="flex justify-between items-center">
@@ -252,7 +300,7 @@ const JobSeekerDashboard: React.FC = () => {
                       }>
                         {status === 'completed' ? 'Completed' :
                          status === 'inProgress' ? 'In Progress' :
-                         status === 'applied' ? 'Applied' : 'Available'}
+                         status === 'applied' ? t('applied') : 'Available'}
                       </Badge>
                     </div>
                   </div>
@@ -266,7 +314,7 @@ const JobSeekerDashboard: React.FC = () => {
         {appliedJobs.length > 0 && (
           <Card className="bg-white shadow-md">
             <CardHeader>
-              <CardTitle>My Applications</CardTitle>
+              <CardTitle>{t('my_applications')}</CardTitle>
               <CardDescription>Track your job applications</CardDescription>
             </CardHeader>
             <CardContent>
@@ -286,7 +334,7 @@ const JobSeekerDashboard: React.FC = () => {
                           status === 'inProgress' ? 'secondary' : 'outline'
                         }>
                           {status === 'completed' ? 'Completed' :
-                           status === 'inProgress' ? 'In Progress' : 'Applied'}
+                           status === 'inProgress' ? 'In Progress' : t('applied')}
                         </Badge>
                         {status === 'applied' && (
                           <Button 
@@ -332,7 +380,7 @@ const JobSeekerDashboard: React.FC = () => {
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold mb-2">Job Description</h4>
+                  <h4 className="font-semibold mb-2">{t('job_description')}</h4>
                   <p className="text-gray-600">{selectedJob.description}</p>
                 </div>
                 
@@ -357,7 +405,7 @@ const JobSeekerDashboard: React.FC = () => {
                   </div>
                   {!appliedJobs.includes(selectedJob.id) && (
                     <Button onClick={() => handleApplyJob(selectedJob.id)}>
-                      Apply for Job
+                      {t('apply_now')}
                     </Button>
                   )}
                   {appliedJobs.includes(selectedJob.id) && (
@@ -370,6 +418,13 @@ const JobSeekerDashboard: React.FC = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Job Applications Modal */}
+        <JobApplicationsModal
+          isOpen={showApplicationsModal}
+          onClose={() => setShowApplicationsModal(false)}
+          type={applicationsModalType}
+        />
       </div>
     </div>
   );

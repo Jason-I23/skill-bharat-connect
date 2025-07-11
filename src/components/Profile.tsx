@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -9,7 +8,9 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { ArrowLeft } from 'lucide-react';
+import { DigiLockerAuth } from './DigiLockerAuth';
+import { JobProgressBar } from './ui/job-progress-bar';
+import { ArrowLeft, Camera, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import sampleData from '../data/sampleData.json';
 
@@ -19,13 +20,29 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(user?.profileData || {});
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfilePhoto(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = () => {
-    updateProfile(formData);
+    const updatedData = { ...formData };
+    if (profilePhoto) {
+      updatedData.profilePhoto = profilePhoto;
+    }
+    updateProfile(updatedData);
     setIsEditing(false);
     toast.success('Profile updated successfully!');
   };
@@ -60,8 +77,75 @@ const Profile: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Profile Photo Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Profile Photo</h3>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                {profilePhoto || formData.profilePhoto ? (
+                  <img
+                    src={profilePhoto || formData.profilePhoto}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
+                    <Camera className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
+                {isEditing && (
+                  <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700">
+                    <Upload className="w-4 h-4" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+              {isEditing && (
+                <div className="text-sm text-gray-600">
+                  <p>Click the upload button to change your profile photo</p>
+                  <p>Recommended: Square image, minimum 200x200px</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* DigiLocker Authentication for Job Seekers */}
+          {user.userType === 'jobSeeker' && (
+            <DigiLockerAuth className="mb-6" />
+          )}
+
           {user.userType === 'jobSeeker' ? (
             <>
+              {/* Job Application Progress */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t('my_applications')}</h3>
+                <div className="space-y-4">
+                  {sampleData.jobApplicationProgress.map((app) => (
+                    <Card key={app.jobId} className="border">
+                      <CardHeader className="pb-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg">{app.jobTitle}</CardTitle>
+                            <p className="text-gray-600">{app.company}</p>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <JobProgressBar
+                          stages={app.stages}
+                          currentStage={app.currentStage}
+                        />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
               {/* Basic Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Basic Information</h3>
