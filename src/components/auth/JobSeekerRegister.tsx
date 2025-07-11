@@ -10,6 +10,7 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Checkbox } from '../ui/checkbox';
+import { ResumeUploadModal } from '../ResumeUploadModal';
 import { toast } from 'sonner';
 import sampleData from '../../data/sampleData.json';
 
@@ -17,6 +18,8 @@ const JobSeekerRegister: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { t } = useLanguage();
+  const [step, setStep] = useState<'resume-check' | 'registration'>('resume-check');
+  const [showResumeModal, setShowResumeModal] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -45,6 +48,33 @@ const JobSeekerRegister: React.FC = () => {
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleResumeChoice = (hasResume: boolean) => {
+    if (hasResume) {
+      setShowResumeModal(true);
+    } else {
+      setStep('registration');
+    }
+  };
+
+  const handleResumeData = (resumeData: any) => {
+    // Pre-fill form with resume data
+    setFormData(prev => ({
+      ...prev,
+      firstName: resumeData.name.split(' ')[0] || '',
+      lastName: resumeData.name.split(' ').slice(1).join(' ') || '',
+      email: resumeData.email || '',
+      phone: resumeData.phone || '',
+      keySkills: resumeData.skills?.join(', ') || '',
+      educationLevel: resumeData.education || '',
+      state: resumeData.location || ''
+    }));
+    setStep('registration');
+  };
+
+  const handleSkipResume = () => {
+    setStep('registration');
   };
 
   const handleSubmit = () => {
@@ -82,6 +112,59 @@ const JobSeekerRegister: React.FC = () => {
     }
     return [];
   };
+
+  if (step === 'resume-check') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle>{t('jobSeekerRegistration')}</CardTitle>
+            <CardDescription>Let's get started with your registration</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="text-center">
+              <h3 className="text-lg font-medium mb-4">{t('have_resume')}</h3>
+              <p className="text-gray-600 mb-6">
+                If you have a resume, we can help pre-fill your registration form to save time.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button 
+                  onClick={() => handleResumeChoice(true)}
+                  className="w-full"
+                >
+                  Yes, I have a resume
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => handleResumeChoice(false)}
+                  className="w-full"
+                >
+                  No, proceed to registration
+                </Button>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/auth-choice?action=register')}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                ← Back
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <ResumeUploadModal
+          isOpen={showResumeModal}
+          onClose={() => setShowResumeModal(false)}
+          onResumeData={handleResumeData}
+          onSkipResume={handleSkipResume}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">

@@ -240,68 +240,72 @@ const JobSeekerDashboard: React.FC = () => {
             <CardDescription>Jobs matching your profile and filters</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredJobs.map((job) => {
                 const status = getJobStatus(job.id);
                 return (
-                  <div key={job.id} className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow cursor-pointer bg-gray-50" onClick={() => handleJobSelect(job)}>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-lg">{job.title}</h3>
-                        <p className="text-gray-600">{job.company}</p>
+                  <div key={job.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer bg-white" onClick={() => handleJobSelect(job)}>
+                    {/* Job Tags at the top */}
+                    <div className="p-3 pb-0">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {job.tags?.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs font-medium">
+                            {getJobTagIcon(tag)}
+                            <span className="ml-1">{getJobTagLabel(tag)}</span>
+                          </Badge>
+                        ))}
+                        {job.skillMatch && (
+                          <Badge variant="secondary" className="text-xs font-medium bg-green-100 text-green-800">
+                            <Award className="w-3 h-3 mr-1" />
+                            {job.skillMatch}% Match
+                          </Badge>
+                        )}
                       </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-green-600">₹{job.payment.toLocaleString()}</div>
-                        <div className="text-sm text-gray-600">{job.paymentType}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {job.location}
-                      </Badge>
-                      <Badge variant="outline">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {job.type}
-                      </Badge>
-                      <Badge variant="outline">
-                        <Star className="w-3 h-3 mr-1" />
-                        {job.rating}
-                      </Badge>
                     </div>
 
-                    {/* Job Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {job.tags?.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {getJobTagIcon(tag)}
-                          <span className="ml-1">{getJobTagLabel(tag)}</span>
+                    <div className="p-3 pt-0 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg">{job.title}</h3>
+                          <p className="text-gray-600">{job.company}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-green-600">₹{job.payment.toLocaleString()}</div>
+                          <div className="text-sm text-gray-600">{job.paymentType}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          {job.location}
                         </Badge>
-                      ))}
-                      {job.skillMatch && (
-                        <Badge variant="secondary" className="text-xs">
-                          <Award className="w-3 h-3 mr-1" />
-                          {job.skillMatch}% Match
+                        <Badge variant="outline" className="text-xs">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {job.type}
                         </Badge>
-                      )}
-                    </div>
-
-                    <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
-
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-4 text-sm text-gray-600">
-                        <span><Users className="w-4 h-4 inline mr-1" />{job.applicants} applied</span>
+                        <Badge variant="outline" className="text-xs">
+                          <Star className="w-3 h-3 mr-1" />
+                          {job.rating}
+                        </Badge>
                       </div>
-                      <Badge variant={
-                        status === 'completed' ? 'default' :
-                        status === 'inProgress' ? 'secondary' :
-                        status === 'applied' ? 'outline' : 'destructive'
-                      }>
-                        {status === 'completed' ? 'Completed' :
-                         status === 'inProgress' ? 'In Progress' :
-                         status === 'applied' ? t('applied') : 'Available'}
-                      </Badge>
+
+                      <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
+
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-4 text-sm text-gray-600">
+                          <span><Users className="w-4 h-4 inline mr-1" />{job.applicants} applied</span>
+                        </div>
+                        <Badge variant={
+                          status === 'completed' ? 'default' :
+                          status === 'inProgress' ? 'secondary' :
+                          status === 'applied' ? 'outline' : 'destructive'
+                        }>
+                          {status === 'completed' ? 'Completed' :
+                           status === 'inProgress' ? 'In Progress' :
+                           status === 'applied' ? t('applied') : 'Available'}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 );
@@ -309,50 +313,6 @@ const JobSeekerDashboard: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-
-        {/* Applied Jobs */}
-        {appliedJobs.length > 0 && (
-          <Card className="bg-white shadow-md">
-            <CardHeader>
-              <CardTitle>{t('my_applications')}</CardTitle>
-              <CardDescription>Track your job applications</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {appliedJobs.map((jobId) => {
-                  const job = sampleData.jobs.find(j => j.id === jobId);
-                  const status = getJobStatus(jobId);
-                  return job ? (
-                    <div key={jobId} className="flex justify-between items-center p-4 border rounded-lg bg-gray-50">
-                      <div>
-                        <h4 className="font-medium">{job.title}</h4>
-                        <p className="text-sm text-gray-600">{job.company} • ₹{job.payment.toLocaleString()} {job.paymentType}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={
-                          status === 'completed' ? 'default' :
-                          status === 'inProgress' ? 'secondary' : 'outline'
-                        }>
-                          {status === 'completed' ? 'Completed' :
-                           status === 'inProgress' ? 'In Progress' : t('applied')}
-                        </Badge>
-                        {status === 'applied' && (
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleCancelApplication(jobId)}
-                          >
-                            Cancel
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Job Details Dialog */}
         <Dialog open={showJobDialog} onOpenChange={setShowJobDialog}>
