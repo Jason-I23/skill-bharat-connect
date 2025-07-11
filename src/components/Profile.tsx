@@ -55,7 +55,7 @@ const Profile: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <Card className="max-w-4xl mx-auto">
+      <Card className="max-w-6xl mx-auto">
         <CardHeader>
           <div className="flex items-center gap-4 mb-4">
             <Button variant="outline" size="sm" onClick={handleBack}>
@@ -63,7 +63,7 @@ const Profile: React.FC = () => {
               Back to Dashboard
             </Button>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <CardTitle>{t('profile')}</CardTitle>
               <CardDescription>Manage your profile information</CardDescription>
@@ -71,6 +71,7 @@ const Profile: React.FC = () => {
             <Button 
               onClick={() => setIsEditing(!isEditing)}
               variant={isEditing ? "outline" : "default"}
+              className="w-full sm:w-auto"
             >
               {isEditing ? 'Cancel' : 'Edit Profile'}
             </Button>
@@ -80,7 +81,7 @@ const Profile: React.FC = () => {
           {/* Profile Photo Section */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Profile Photo</h3>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="relative">
                 {profilePhoto || formData.profilePhoto ? (
                   <img
@@ -114,42 +115,15 @@ const Profile: React.FC = () => {
             </div>
           </div>
 
-          {/* DigiLocker Authentication for Job Seekers */}
-          {user.userType === 'jobSeeker' && (
-            <DigiLockerAuth className="mb-6" />
-          )}
+          {/* DigiLocker Authentication */}
+          <DigiLockerAuth className="mb-6" />
 
           {user.userType === 'jobSeeker' ? (
             <>
-              {/* Job Application Progress */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">{t('my_applications')}</h3>
-                <div className="space-y-4">
-                  {sampleData.jobApplicationProgress.map((app) => (
-                    <Card key={app.jobId} className="border">
-                      <CardHeader className="pb-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-lg">{app.jobTitle}</CardTitle>
-                            <p className="text-gray-600">{app.company}</p>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <JobProgressBar
-                          stages={app.stages}
-                          currentStage={app.currentStage}
-                        />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
               {/* Basic Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Basic Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
@@ -219,7 +193,7 @@ const Profile: React.FC = () => {
               {/* Contact Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Contact Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -270,7 +244,7 @@ const Profile: React.FC = () => {
               {/* Education & Skills */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Education & Skills</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="education">Education Level</Label>
                     <Select 
@@ -330,7 +304,7 @@ const Profile: React.FC = () => {
               {/* Additional Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Additional Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="username">Username</Label>
                     <Input
@@ -360,13 +334,41 @@ const Profile: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* My Applications Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{t('my_applications')}</h3>
+                <div className="space-y-4">
+                  {sampleData.jobApplicationProgress.map((app) => (
+                    <Card key={app.jobId} className="border">
+                      <CardHeader className="pb-3">
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                          <div>
+                            <CardTitle className="text-lg">{app.jobTitle}</CardTitle>
+                            <p className="text-gray-600">{app.company}</p>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Applied: {new Date(app.appliedDate).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <JobProgressBar
+                          stages={app.stages}
+                          currentStage={app.currentStage}
+                        />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </>
           ) : (
             <>
               {/* Job Provider Profile */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Company Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="companyName">Company Name</Label>
                     <Input
@@ -442,7 +444,7 @@ const Profile: React.FC = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="md:col-span-2">
+                  <div className="sm:col-span-2">
                     <Label htmlFor="address">Address</Label>
                     <Input
                       id="address"
@@ -492,9 +494,9 @@ const Profile: React.FC = () => {
           )}
           
           {isEditing && (
-            <div className="flex gap-2 pt-4">
-              <Button onClick={handleSave}>Save Changes</Button>
-              <Button variant="outline" onClick={() => setIsEditing(false)}>
+            <div className="flex flex-col sm:flex-row gap-2 pt-4">
+              <Button onClick={handleSave} className="w-full sm:w-auto">Save Changes</Button>
+              <Button variant="outline" onClick={() => setIsEditing(false)} className="w-full sm:w-auto">
                 Cancel
               </Button>
             </div>

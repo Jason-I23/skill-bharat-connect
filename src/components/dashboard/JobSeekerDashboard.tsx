@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -35,6 +34,21 @@ const JobSeekerDashboard: React.FC = () => {
   const completedJobs = ['job_2'];
   const inProgressJobs = ['job_1'];
   const totalEarnings = 45000;
+
+  // Get actual applied jobs with details
+  const getAppliedJobsWithDetails = () => {
+    return sampleData.jobs.filter(job => appliedJobs.includes(job.id));
+  };
+
+  // Get completed jobs with details
+  const getCompletedJobsWithDetails = () => {
+    return sampleData.jobs.filter(job => completedJobs.includes(job.id));
+  };
+
+  // Get in-progress jobs with details
+  const getInProgressJobsWithDetails = () => {
+    return sampleData.jobs.filter(job => inProgressJobs.includes(job.id));
+  };
 
   const stats = {
     applied: appliedJobs.length,
@@ -74,6 +88,20 @@ const JobSeekerDashboard: React.FC = () => {
   const handleStatsClick = (type: 'applied' | 'completed' | 'inProgress') => {
     setApplicationsModalType(type);
     setShowApplicationsModal(true);
+  };
+
+  // Get jobs for stats modal based on type
+  const getJobsForStatsModal = (type: 'applied' | 'completed' | 'inProgress') => {
+    switch (type) {
+      case 'applied':
+        return getAppliedJobsWithDetails();
+      case 'completed':
+        return getCompletedJobsWithDetails();
+      case 'inProgress':
+        return getInProgressJobsWithDetails();
+      default:
+        return [];
+    }
   };
 
   const filteredJobs = sampleData.jobs.filter(job => {
@@ -379,12 +407,75 @@ const JobSeekerDashboard: React.FC = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Job Applications Modal */}
-        <JobApplicationsModal
-          isOpen={showApplicationsModal}
-          onClose={() => setShowApplicationsModal(false)}
-          type={applicationsModalType}
-        />
+        {/* Stats Modal for Job Lists */}
+        <Dialog open={showApplicationsModal} onOpenChange={setShowApplicationsModal}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {applicationsModalType === 'applied' && `${t('jobs_applied')} (${stats.applied})`}
+                {applicationsModalType === 'completed' && `${t('jobs_completed')} (${stats.completed})`}
+                {applicationsModalType === 'inProgress' && `${t('jobs_in_progress')} (${stats.inProgress})`}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {getJobsForStatsModal(applicationsModalType).length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <div className="text-lg font-medium mb-2">No jobs found</div>
+                  <p>
+                    {applicationsModalType === 'applied' && "You haven't applied to any jobs yet."}
+                    {applicationsModalType === 'completed' && "You haven't completed any jobs yet."}
+                    {applicationsModalType === 'inProgress' && "You don't have any jobs in progress."}
+                  </p>
+                </div>
+              ) : (
+                getJobsForStatsModal(applicationsModalType).map((job) => (
+                  <Card key={job.id} className="border shadow-sm">
+                    <CardContent className="p-4">
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold mb-2">{job.title}</h3>
+                          <p className="text-gray-600 mb-2">{job.company}</p>
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            <Badge variant="outline" className="text-xs">
+                              <MapPin className="w-3 h-3 mr-1" />
+                              {job.location}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {job.type}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              <Star className="w-3 h-3 mr-1" />
+                              {job.rating}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-green-600 mb-2">
+                            ₹{job.payment.toLocaleString()}
+                          </div>
+                          <div className="text-sm text-gray-600">{job.paymentType}</div>
+                          <Badge 
+                            variant={
+                              applicationsModalType === 'completed' ? 'default' :
+                              applicationsModalType === 'inProgress' ? 'secondary' : 'outline'
+                            }
+                            className="mt-2"
+                          >
+                            {applicationsModalType === 'completed' ? 'Completed' :
+                             applicationsModalType === 'inProgress' ? 'In Progress' : 'Applied'}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

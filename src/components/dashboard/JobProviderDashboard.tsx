@@ -8,8 +8,8 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { Plus, Eye, Edit, Trash, MapPin, Clock, Users, Star, CheckCircle, XCircle, DollarSign, Award, Phone, Mail } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Plus, Eye, Edit, Trash, MapPin, Clock, Users, Star, CheckCircle, DollarSign, Award, Phone, Mail, FileText, Shield } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import sampleData from '../../data/sampleData.json';
 
@@ -264,6 +264,17 @@ const JobProviderDashboard: React.FC = () => {
     }
   };
 
+  const handleViewCandidateProfile = (candidate: Candidate) => {
+    setSelectedCandidateProfile(candidate);
+  };
+
+  const handleRequestDocuments = (candidateId: string) => {
+    toast({
+      title: "Document Request Sent",
+      description: "The candidate has been notified to submit verification documents.",
+    });
+  };
+
   return (
     <div className="container mx-auto px-4 py-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Welcome Section */}
@@ -294,23 +305,103 @@ const JobProviderDashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* Create Job Section */}
+      {/* Jobs Grid */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <CardTitle>Job Management</CardTitle>
-              <CardDescription>Create and manage your job postings</CardDescription>
+              <CardTitle>Your Posted Jobs ({jobs.length})</CardTitle>
+              <CardDescription>Manage your active job postings</CardDescription>
             </div>
-            <Button onClick={() => setShowCreateForm(!showCreateForm)}>
+            <Button onClick={() => setShowCreateJobModal(true)} className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Create Job
             </Button>
           </div>
         </CardHeader>
-        
-        {showCreateForm && (
-          <CardContent className="border-t pt-6">
+        <CardContent>
+          {jobs.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <div className="text-lg font-medium mb-2">No jobs posted yet</div>
+              <p>Create your first job posting to get started.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {jobs.map((job) => (
+                <Card key={job.id} className="border hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg line-clamp-1">{job.title}</h3>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            <Badge variant="outline" className="text-xs">
+                              <MapPin className="w-3 h-3 mr-1" />
+                              {job.location}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {job.paymentType}
+                            </Badge>
+                            <Badge variant={job.status === 'active' ? 'default' : job.status === 'completed' ? 'secondary' : 'outline'} className="text-xs">
+                              {job.status}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-green-600">₹{job.salary}</div>
+                          <div className="text-xs text-gray-600">{job.paymentType}</div>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
+                      
+                      <div className="flex gap-4 text-xs text-gray-600">
+                        <span><Users className="w-3 h-3 inline mr-1" />{job.applicants || 0} applicants</span>
+                        <span><Star className="w-3 h-3 inline mr-1" />{job.shortlisted || 0} shortlisted</span>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="outline" onClick={() => setSelectedJobForCandidates(job)} className="text-xs px-2 py-1">
+                          <Eye className="w-3 h-3 mr-1" />
+                          View Candidates
+                        </Button>
+                        {job.status === 'active' && (
+                          <>
+                            <Button size="sm" variant="outline" onClick={() => handleEditJob(job)} className="text-xs px-2 py-1">
+                              <Edit className="w-3 h-3 mr-1" />
+                              Edit
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setSelectedJobForCompletion(job)} className="text-xs px-2 py-1">
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              Complete
+                            </Button>
+                          </>
+                        )}
+                        <Button size="sm" variant="outline" onClick={() => handleDeleteJob(job.id)} className="text-xs px-2 py-1">
+                          <Trash className="w-3 h-3 mr-1" />
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Create/Edit Job Modal */}
+      <Dialog open={showCreateJobModal} onOpenChange={setShowCreateJobModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingJob ? 'Edit Job' : 'Create New Job'}</DialogTitle>
+            <DialogDescription>
+              {editingJob ? 'Update your job posting details' : 'Fill in the details to create a new job posting'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="title">Job Title *</Label>
@@ -379,23 +470,23 @@ const JobProviderDashboard: React.FC = () => {
                   placeholder="Tools/equipment needed"
                 />
               </div>
-              <div className="md:col-span-2">
-                <Label htmlFor="description">Job Description *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="Detailed description of the work required"
-                  rows={4}
-                />
-              </div>
             </div>
-            <div className="flex gap-2 mt-4">
+            <div>
+              <Label htmlFor="description">Job Description *</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                placeholder="Detailed description of the work required"
+                rows={4}
+              />
+            </div>
+            <div className="flex gap-2 pt-4">
               <Button onClick={editingJob ? handleUpdateJob : handleCreateJob}>
                 {editingJob ? 'Update Job' : 'Create Job'}
               </Button>
               <Button variant="outline" onClick={() => {
-                setShowCreateForm(false);
+                setShowCreateJobModal(false);
                 setEditingJob(null);
                 setFormData({
                   title: '',
@@ -410,98 +501,9 @@ const JobProviderDashboard: React.FC = () => {
                 Cancel
               </Button>
             </div>
-          </CardContent>
-        )}
-      </Card>
-
-      {/* Posted Jobs */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Posted Jobs</CardTitle>
-          <CardDescription>Manage your active job postings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {jobs.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No jobs posted yet. Create your first job posting above.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {jobs.map((job) => (
-                <div key={job.id} className="border rounded-lg p-4 bg-white">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="font-semibold text-lg">{job.title}</h3>
-                      <div className="flex gap-2 mt-1">
-                        <Badge variant="outline">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {job.location}
-                        </Badge>
-                        <Badge variant="outline">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {job.paymentType}
-                        </Badge>
-                        <Badge variant={job.status === 'active' ? 'default' : job.status === 'completed' ? 'secondary' : 'outline'}>
-                          {job.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-green-600">₹{job.salary}</div>
-                      <div className="text-sm text-gray-600">{job.paymentType}</div>
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-600 mb-3">{job.description}</p>
-                  
-                  {job.toolsRequired && (
-                    <p className="text-sm text-gray-600 mb-3">
-                      <strong>Tools required:</strong> {job.toolsRequired}
-                    </p>
-                  )}
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-4 text-sm text-gray-600">
-                      <span><Users className="w-4 h-4 inline mr-1" />{job.applicants || 0} applicants</span>
-                      <span><Star className="w-4 h-4 inline mr-1" />{job.shortlisted || 0} shortlisted</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => setSelectedJobForCandidates(job)}
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View Candidates
-                      </Button>
-                      {job.status === 'active' && (
-                        <>
-                          <Button size="sm" variant="outline" onClick={() => handleEditJob(job)}>
-                            <Edit className="w-4 h-4 mr-1" />
-                            Edit
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => setSelectedJobForCompletion(job)}
-                          >
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            Complete
-                          </Button>
-                        </>
-                      )}
-                      <Button size="sm" variant="outline" onClick={() => handleDeleteJob(job.id)}>
-                        <Trash className="w-4 h-4 mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Stats Modal */}
       <Dialog open={!!showStatsModal} onOpenChange={() => setShowStatsModal(null)}>
@@ -596,7 +598,7 @@ const JobProviderDashboard: React.FC = () => {
                     <CheckCircle className="w-4 h-4 mr-1" />
                     Select
                   </Button>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" onClick={() => handleViewCandidateProfile(candidate)}>
                     <Eye className="w-4 h-4 mr-1" />
                     View Profile
                   </Button>
@@ -644,6 +646,98 @@ const JobProviderDashboard: React.FC = () => {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Candidate Profile Modal */}
+      <Dialog open={!!selectedCandidateProfile} onOpenChange={() => setSelectedCandidateProfile(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Candidate Profile</DialogTitle>
+            <DialogDescription>
+              Detailed profile information for {selectedCandidateProfile?.name}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedCandidateProfile && (
+            <div className="space-y-6">
+              {/* Profile Header */}
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                  <span className="text-xl font-bold text-gray-600">
+                    {selectedCandidateProfile.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold">{selectedCandidateProfile.name}</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-medium">{selectedCandidateProfile.rating}</span>
+                    </div>
+                    <Badge variant="outline">{selectedCandidateProfile.experience}</Badge>
+                    <Badge className={getFitColor(selectedCandidateProfile.fit)}>{selectedCandidateProfile.fit} fit</Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Contact Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="w-4 h-4 text-gray-500" />
+                      <span>{selectedCandidateProfile.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Mail className="w-4 h-4 text-gray-500" />
+                      <span>{selectedCandidateProfile.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-4 h-4 text-gray-500" />
+                      <span>{selectedCandidateProfile.location}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Application Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <div>Applied: {selectedCandidateProfile.applied}</div>
+                    <div>Experience: {selectedCandidateProfile.experience}</div>
+                    <div>Rating: {selectedCandidateProfile.rating}/5.0</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Skills */}
+              <div>
+                <h4 className="font-semibold mb-2">Skills & Expertise</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedCandidateProfile.skills.map((skill, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-4 border-t">
+                <Button>
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Select Candidate
+                </Button>
+                <Button variant="outline" onClick={() => handleRequestDocuments(selectedCandidateProfile.id)}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Request Documents
+                </Button>
+                <Button variant="outline">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Contact
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
