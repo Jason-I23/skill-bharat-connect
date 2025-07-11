@@ -16,7 +16,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguage] = useState<Language>('en');
 
   const t = (key: string): string => {
-    return sampleData.translations[language][key as keyof typeof sampleData.translations.en] || key;
+    const keys = key.split('.');
+    let value: any = sampleData.translations[language];
+    
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        return key; // Return key if translation not found
+      }
+    }
+    
+    return typeof value === 'string' ? value : key;
   };
 
   return (
