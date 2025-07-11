@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -10,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { CheckboxDropdown } from '../ui/checkbox-dropdown';
 import { JobApplicationsModal } from '../JobApplicationsModal';
-import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X, Shield, TrendingUp, Award } from 'lucide-react';
+import { JobProgressBar } from '../ui/job-progress-bar';
+import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X, Shield, TrendingUp, Award, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import sampleData from '../../data/sampleData.json';
 
@@ -338,6 +340,85 @@ const JobSeekerDashboard: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* My Applications Section */}
+        <Card className="bg-white shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Briefcase className="w-5 h-5" />
+              {t('my_applications')}
+            </CardTitle>
+            <CardDescription>Track your job applications and their progress</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {sampleData.jobApplicationProgress.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <Briefcase className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-medium mb-2">No Applications Yet</h3>
+                  <p>You haven't applied to any jobs yet. Start browsing jobs above!</p>
+                </div>
+              ) : (
+                sampleData.jobApplicationProgress.map((app) => (
+                  <Card key={app.jobId} className="border shadow-sm">
+                    <CardHeader className="pb-3">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                        <div className="flex-1">
+                          <CardTitle className="text-lg flex items-center gap-2">
+                            {app.jobTitle}
+                            {appliedJobs.includes(app.jobId) && (
+                              <Badge variant="outline" className="text-xs">
+                                Applied
+                              </Badge>
+                            )}
+                          </CardTitle>
+                          <p className="text-gray-600 mb-2">{app.company}</p>
+                          <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                            <span>Applied: {new Date(app.appliedDate).toLocaleDateString()}</span>
+                            {app.salary && (
+                              <span>Salary: ₹{app.salary.toLocaleString()}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          {appliedJobs.includes(app.jobId) && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCancelApplication(app.jobId)}
+                              className="text-red-600 border-red-300 hover:bg-red-50"
+                            >
+                              <AlertTriangle className="w-4 h-4 mr-1" />
+                              Cancel Application
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-medium mb-3 text-sm">Application Progress</h4>
+                          <JobProgressBar
+                            stages={app.stages}
+                            currentStage={app.currentStage}
+                          />
+                        </div>
+                        
+                        {app.notes && (
+                          <div className="bg-blue-50 p-3 rounded-lg">
+                            <h4 className="font-medium mb-1 text-blue-900 text-sm">Latest Update</h4>
+                            <p className="text-sm text-blue-800">{app.notes}</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -9,7 +10,6 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { DigiLockerAuth } from './DigiLockerAuth';
-import { JobProgressBar } from './ui/job-progress-bar';
 import { ArrowLeft, Camera, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import sampleData from '../data/sampleData.json';
@@ -65,8 +65,8 @@ const Profile: React.FC = () => {
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <CardTitle>{t('profile')}</CardTitle>
-              <CardDescription>Manage your profile information</CardDescription>
+              <CardTitle>Manage Information</CardTitle>
+              <CardDescription>Update your personal and professional details</CardDescription>
             </div>
             <Button 
               onClick={() => setIsEditing(!isEditing)}
@@ -332,34 +332,6 @@ const Profile: React.FC = () => {
                       </div>
                     </RadioGroup>
                   </div>
-                </div>
-              </div>
-
-              {/* My Applications Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">{t('my_applications')}</h3>
-                <div className="space-y-4">
-                  {sampleData.jobApplicationProgress.map((app) => (
-                    <Card key={app.jobId} className="border">
-                      <CardHeader className="pb-3">
-                        <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-                          <div>
-                            <CardTitle className="text-lg">{app.jobTitle}</CardTitle>
-                            <p className="text-gray-600">{app.company}</p>
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Applied: {new Date(app.appliedDate).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <JobProgressBar
-                          stages={app.stages}
-                          currentStage={app.currentStage}
-                        />
-                      </CardContent>
-                    </Card>
-                  ))}
                 </div>
               </div>
             </>
