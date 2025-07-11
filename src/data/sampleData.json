@@ -35,14 +35,44 @@
       "candidate_profile": "Candidate Profile",
       "experience": "Experience",
       "contact_information": "Contact Information",
-      "verify_credentials": "Verify Credentials"
+      "verify_credentials": "Verify Credentials",
+      "create_job": "Create Job",
+      "job_title": "Job Title",
+      "job_description": "Job Description",
+      "required_skills": "Required Skills",
+      "salary": "Salary",
+      "job_type": "Job Type",
+      "full_time": "Full Time",
+      "part_time": "Part Time",
+      "contract": "Contract",
+      "available_jobs": "Available Jobs",
+      "apply_now": "Apply Now",
+      "filter_by_location": "Filter by Location",
+      "filter_by_skills": "Filter by Skills",
+      "clear_filters": "Clear Filters",
+      "my_applications": "My Applications",
+      "view_details": "View Details",
+      "job_applications": "Job Applications",
+      "manage_candidates": "Manage Candidates",
+      "view_profile": "View Profile",
+      "contact_candidate": "Contact Candidate",
+      "shortlist": "Shortlist",
+      "reject": "Reject",
+      "hire": "Hire",
+      "pending_review": "Pending Review",
+      "shortlisted": "Shortlisted",
+      "hired": "Hired",
+      "rejected": "Rejected",
+      "jobSeekerRegistration": "Job Seeker Registration",
+      "jobProviderRegistration": "Job Provider Registration",
+      "profile": "Profile"
     },
     "ta": {
       "welcome": "வரவேற்கிறோம்",
       "skills": "திறமைகள்",
       "location": "இடம்",
       "jobs_applied": "விண்ணப்பித்த வேலைகள்",
-      "jobs_completed": "முடிக்கப்பட்ड வேலைகள்",
+      "jobs_completed": "முடிக்கப்பட்ட வேலைகள்",
       "jobs_in_progress": "நடப்பில் உள்ள வேலைகள்",
       "my_jobs": "என் வேலைகள்",
       "manage_job_applications": "உங்கள் வேலை விண்ணப்பங்களை நிர்வகிக்கவும்",
@@ -71,14 +101,85 @@
       "candidate_profile": "வேட்பாளர் சுயவிவரம்",
       "experience": "அனுபவம்",
       "contact_information": "தொடர்பு தகவல்",
-      "verify_credentials": "சான்றுகளை சரிபார்க்கவும்"
+      "verify_credentials": "சான்றுகளை சரிபார்க்கவும்",
+      "create_job": "வேலை உருவாக்கவும்",
+      "job_title": "வேலை தலைப்பு",
+      "job_description": "வேலை விளக்கம்",
+      "required_skills": "தேவையான திறன்கள்",
+      "salary": "சம்பளம்",
+      "job_type": "வேலை வகை",
+      "full_time": "முழு நேரம்",
+      "part_time": "பகுதி நேரம்",
+      "contract": "ஒப்பந்தம்",
+      "available_jobs": "கிடைக்கும் வேலைகள்",
+      "apply_now": "இப்போது விண்ணப்பிக்கவும்",
+      "filter_by_location": "இடத்தின் அடிப்படையில் வடிகட்டவும்",
+      "filter_by_skills": "திறன்களின் அடிப்படையில் வடிகட்டவும்",
+      "clear_filters": "வடிப்பான்களை அழிக்கவும்",
+      "my_applications": "என் விண்ணப்பங்கள்",
+      "view_details": "விவரங்களைப் பார்க்கவum்",
+      "job_applications": "வேலை விண்ணப்பங்கள்",
+      "manage_candidates": "வேட்பாளர்களை நிர்வகிக்கவும்",
+      "view_profile": "சுயவிவரத்தைப் பார்க்கவும்",
+      "contact_candidate": "வேட்பாளரைத் தொடர்பு கொள்ளவும்",
+      "shortlist": "குறுகிய பட்டியல்",
+      "reject": "நிராகரிக்கவும்",
+      "hire": "வேலைக்கு எடுக்கவும்",
+      "pending_review": "மதிப்பாய்வு நிலுவையில்",
+      "shortlisted": "குறுகிய பட்டியலிடப்பட்டது",
+      "hired": "வேலைக்கு எடுக்கப்பட்டது",
+      "rejected": "நிராகரிக்கப்பட்டது",
+      "jobSeekerRegistration": "வேலை தேடுபவர் பதிவு",
+      "jobProviderRegistration": "வேலை வழங்குபவர் பதிவு",
+      "profile": "சுயவிவரம்"
     }
   },
   "districts": [
-    "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupattur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"
+    "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupattur", "Tirupur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"
+  ],
+  "states": [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
   ],
   "skillCategories": [
     "Plumbing", "Electrical", "Carpentry", "Painting", "Construction", "Gardening", "Cleaning", "Cooking", "Tailoring", "Welding", "Masonry", "Roofing", "Tiling", "Interior Design", "Electronics Repair", "Motor Repair", "AC Repair", "Home Appliances", "Security Services", "Transportation"
+  ],
+  "educationLevels": [
+    { "value": "below-10th", "label": "Below 10th Standard" },
+    { "value": "10th-pass", "label": "10th Pass" },
+    { "value": "12th-pass", "label": "12th Pass" },
+    { "value": "diploma-after-10th", "label": "Diploma After 10th" },
+    { "value": "diploma-after-12th", "label": "Diploma After 12th" },
+    { "value": "graduate", "label": "Graduate" },
+    { "value": "post-graduate", "label": "Post Graduate" }
+  ],
+  "diplomaAfter10th": [
+    "Civil Engineering", "Mechanical Engineering", "Electrical Engineering", "Electronics Engineering", "Computer Engineering", "Automobile Engineering", "Textile Technology", "Fashion Technology", "Hotel Management", "Catering Technology"
+  ],
+  "diplomaAfter12th": [
+    "Engineering", "Pharmacy", "Nursing", "Medical Laboratory Technology", "Radiography", "Physiotherapy", "Optometry", "Dental Hygiene", "Agricultural Technology", "Veterinary Science"
+  ],
+  "graduateDegrees": [
+    "Bachelor of Arts (BA)", "Bachelor of Science (BSc)", "Bachelor of Commerce (BCom)", "Bachelor of Engineering (BE)", "Bachelor of Technology (BTech)", "Bachelor of Computer Applications (BCA)", "Bachelor of Business Administration (BBA)", "Bachelor of Fine Arts (BFA)", "Bachelor of Education (BEd)", "Bachelor of Medicine (MBBS)"
+  ],
+  "ncsUsers": [
+    {
+      "firstName": "Raj",
+      "lastName": "Kumar",
+      "email": "raj.kumar@example.com",
+      "phone": "9876543210",
+      "skills": ["Plumbing", "Electrical"],
+      "location": "Chennai",
+      "experience": "5 years"
+    },
+    {
+      "firstName": "Priya",
+      "lastName": "Sharma",
+      "email": "priya.sharma@example.com",
+      "phone": "9876543211",
+      "skills": ["Carpentry", "Painting"],
+      "location": "Coimbatore",
+      "experience": "3 years"
+    }
   ],
   "jobs": [
     {
@@ -94,7 +195,10 @@
       "type": "full-time",
       "rating": 4.5,
       "applicants": 12,
-      "recruited": 2
+      "recruited": 2,
+      "postedBy": "provider_1",
+      "datePosted": "2024-01-15",
+      "applications": []
     },
     {
       "id": "job_2",
@@ -109,7 +213,10 @@
       "type": "full-time",
       "rating": 4.7,
       "applicants": 8,
-      "recruited": 1
+      "recruited": 1,
+      "postedBy": "provider_2",
+      "datePosted": "2024-01-10",
+      "applications": []
     },
     {
       "id": "job_3",
@@ -124,7 +231,10 @@
       "type": "contract",
       "rating": 4.3,
       "applicants": 15,
-      "recruited": 3
+      "recruited": 3,
+      "postedBy": "provider_3",
+      "datePosted": "2024-01-08",
+      "applications": []
     },
     {
       "id": "job_4", 
@@ -139,7 +249,10 @@
       "type": "contract",
       "rating": 4.4,
       "applicants": 10,
-      "recruited": 2
+      "recruited": 2,
+      "postedBy": "provider_4",
+      "datePosted": "2024-01-05",
+      "applications": []
     },
     {
       "id": "job_5",
@@ -154,7 +267,10 @@
       "type": "part-time",
       "rating": 4.2,
       "applicants": 6,
-      "recruited": 1
+      "recruited": 1,
+      "postedBy": "provider_5",
+      "datePosted": "2024-01-03",
+      "applications": []
     },
     {
       "id": "job_6",
@@ -169,7 +285,28 @@
       "type": "full-time",
       "rating": 4.6,
       "applicants": 9,
-      "recruited": 1
+      "recruited": 1,
+      "postedBy": "provider_6",
+      "datePosted": "2024-01-01",
+      "applications": []
+    }
+  ],
+  "jobApplications": [
+    {
+      "id": "app_1",
+      "jobId": "job_1",
+      "userId": "user1",
+      "status": "applied",
+      "appliedDate": "2024-01-16",
+      "notes": ""
+    },
+    {
+      "id": "app_2",
+      "jobId": "job_2",
+      "userId": "user1",
+      "status": "inProgress",
+      "appliedDate": "2024-01-12",
+      "notes": "Interview scheduled"
     }
   ]
 }
