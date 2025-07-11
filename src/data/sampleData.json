@@ -1,3 +1,4 @@
+
 {
   "states": [
     "Andhra Pradesh",
@@ -117,6 +118,8 @@
     {
       "id": "ncs_001",
       "name": "Rajesh Kumar",
+      "firstName": "Rajesh",
+      "lastName": "Kumar",
       "email": "rajesh.kumar@ncs.gov.in",
       "phone": "9876543210",
       "userType": "jobSeeker",
@@ -130,6 +133,8 @@
     {
       "id": "ncs_002",
       "name": "Priya Sharma",
+      "firstName": "Priya",
+      "lastName": "Sharma",
       "email": "priya.sharma@ncs.gov.in",
       "phone": "9123456789",
       "userType": "jobSeeker",
@@ -251,53 +256,141 @@
     {
       "jobId": "job_001",
       "userId": "ncs_001",
+      "jobTitle": "Residential Plumber Required",
+      "company": "Home Services Co.",
+      "jobLocation": "Chennai, Tamil Nadu",
+      "salary": 20000,
+      "jobDescription": "Looking for experienced plumber for residential plumbing work including pipe installation and repairs.",
+      "requirements": ["2+ years experience", "Own tools preferred", "Local area knowledge"],
       "status": "applied",
       "appliedDate": "2024-01-16",
+      "currentStage": 1,
+      "nextUpdateDate": "2024-01-20",
+      "notes": "Application under review by HR team",
       "stages": [
         {
-          "stage": "application_submitted",
-          "date": "2024-01-16",
-          "status": "completed"
+          "name": "Application Submitted",
+          "completed": true,
+          "date": "2024-01-16"
         },
         {
-          "stage": "profile_review",
-          "date": "2024-01-17",
-          "status": "in_progress"
+          "name": "Profile Review",
+          "completed": true,
+          "date": "2024-01-17"
         },
         {
-          "stage": "interview_scheduled",
-          "status": "pending"
+          "name": "Interview Scheduled",
+          "completed": false,
+          "date": null
         },
         {
-          "stage": "final_selection",
-          "status": "pending"
+          "name": "Technical Assessment",
+          "completed": false,
+          "date": null
+        },
+        {
+          "name": "Final Interview",
+          "completed": false,
+          "date": null
+        },
+        {
+          "name": "Job Offer",
+          "completed": false,
+          "date": null
         }
       ]
     },
     {
       "jobId": "job_002",
       "userId": "ncs_001",
+      "jobTitle": "Carpenter for Furniture Making",
+      "company": "Wood Craft Industries",
+      "jobLocation": "Coimbatore, Tamil Nadu",
+      "salary": 24000,
+      "jobDescription": "Skilled carpenter needed for custom furniture manufacturing. Must have experience with modern woodworking tools.",
+      "requirements": ["3+ years experience", "Knowledge of modern tools", "Quality focused"],
       "status": "shortlisted",
       "appliedDate": "2024-01-14",
+      "currentStage": 4,
+      "nextUpdateDate": "2024-01-25",
+      "notes": "Scheduled for final interview on Monday",
       "stages": [
         {
-          "stage": "application_submitted",
-          "date": "2024-01-14",
-          "status": "completed"
+          "name": "Application Submitted",
+          "completed": true,
+          "date": "2024-01-14"
         },
         {
-          "stage": "profile_review",
-          "date": "2024-01-15",
-          "status": "completed"
+          "name": "Profile Review",
+          "completed": true,
+          "date": "2024-01-15"
         },
         {
-          "stage": "interview_scheduled",
-          "date": "2024-01-18",
-          "status": "completed"
+          "name": "Interview Scheduled",
+          "completed": true,
+          "date": "2024-01-18"
         },
         {
-          "stage": "final_selection",
-          "status": "in_progress"
+          "name": "Technical Assessment",
+          "completed": true,
+          "date": "2024-01-20"
+        },
+        {
+          "name": "Final Interview",
+          "completed": false,
+          "date": null
+        },
+        {
+          "name": "Job Offer",
+          "completed": false,
+          "date": null
+        }
+      ]
+    },
+    {
+      "jobId": "job_003",
+      "userId": "ncs_001",
+      "jobTitle": "Electrical Technician",
+      "company": "Power Solutions Ltd",
+      "jobLocation": "Bangalore, Karnataka",
+      "salary": 27500,
+      "jobDescription": "Electrical technician required for industrial electrical maintenance and installation work.",
+      "requirements": ["ITI in Electrical", "Safety certification", "Industrial experience"],
+      "status": "completed",
+      "appliedDate": "2024-01-10",
+      "currentStage": 5,
+      "nextUpdateDate": null,
+      "notes": "Job offer accepted. Starting date: February 1, 2024",
+      "stages": [
+        {
+          "name": "Application Submitted",
+          "completed": true,
+          "date": "2024-01-10"
+        },
+        {
+          "name": "Profile Review",
+          "completed": true,
+          "date": "2024-01-11"
+        },
+        {
+          "name": "Interview Scheduled",
+          "completed": true,
+          "date": "2024-01-13"
+        },
+        {
+          "name": "Technical Assessment",
+          "completed": true,
+          "date": "2024-01-15"
+        },
+        {
+          "name": "Final Interview",
+          "completed": true,
+          "date": "2024-01-18"
+        },
+        {
+          "name": "Job Offer",
+          "completed": true,
+          "date": "2024-01-22"
         }
       ]
     }
