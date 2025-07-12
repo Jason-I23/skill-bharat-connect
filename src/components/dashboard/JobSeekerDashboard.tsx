@@ -15,12 +15,13 @@ import { JobProviderModal } from '../ui/job-provider-modal';
 import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X, Shield, TrendingUp, Award, AlertTriangle, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import sampleData from '../../data/sampleData.json';
+import newUserData from '../../data/newUserData.json';
 
 const JobSeekerDashboard: React.FC = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
-  const [appliedJobs, setAppliedJobs] = useState<string[]>(['job_1', 'job_3']);
+  const [appliedJobs, setAppliedJobs] = useState<string[]>(user?.isNewUser ? [] : ['job_1', 'job_3']);
   const [filters, setFilters] = useState({
     locations: [] as string[],
     skills: [] as string[],
@@ -33,21 +34,25 @@ const JobSeekerDashboard: React.FC = () => {
   const [showProviderModal, setShowProviderModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState<any>(null);
 
-  const completedJobs = ['job_2'];
-  const inProgressJobs = ['job_1'];
-  const totalEarnings = 45000;
+  // Use new user data if user is new, otherwise use existing data
+  const userData = user?.isNewUser ? newUserData.newJobSeeker : sampleData;
+  const availableJobs = user?.isNewUser ? newUserData.newJobSeeker.availableJobs : sampleData.jobs;
+  
+  const completedJobs = user?.isNewUser ? [] : ['job_2'];
+  const inProgressJobs = user?.isNewUser ? [] : ['job_1'];
+  const totalEarnings = user?.isNewUser ? 0 : 45000;
 
   // Helper functions
   const getAppliedJobsWithDetails = () => {
-    return sampleData.jobs.filter(job => appliedJobs.includes(job.id));
+    return availableJobs.filter(job => appliedJobs.includes(job.id));
   };
 
   const getCompletedJobsWithDetails = () => {
-    return sampleData.jobs.filter(job => completedJobs.includes(job.id));
+    return availableJobs.filter(job => completedJobs.includes(job.id));
   };
 
   const getInProgressJobsWithDetails = () => {
-    return sampleData.jobs.filter(job => inProgressJobs.includes(job.id));
+    return availableJobs.filter(job => inProgressJobs.includes(job.id));
   };
 
   const stats = {
@@ -59,7 +64,7 @@ const JobSeekerDashboard: React.FC = () => {
 
   // Create job application entry when user applies
   const createJobApplication = (jobId: string) => {
-    const job = sampleData.jobs.find(j => j.id === jobId);
+    const job = availableJobs.find(j => j.id === jobId);
     if (!job) return null;
 
     return {
@@ -83,7 +88,7 @@ const JobSeekerDashboard: React.FC = () => {
   // Dynamic job applications based on applied jobs
   const getJobApplications = () => {
     return appliedJobs.map(jobId => {
-      const existingApp = sampleData.jobApplicationProgress.find(app => app.jobId === jobId);
+      const existingApp = userData.jobApplicationProgress?.find(app => app.jobId === jobId);
       if (existingApp) return existingApp;
       return createJobApplication(jobId);
     }).filter(Boolean);
@@ -124,7 +129,7 @@ const JobSeekerDashboard: React.FC = () => {
     });
   };
 
-  const filteredJobs = sampleData.jobs.filter(job => {
+  const filteredJobs = availableJobs.filter(job => {
     if (completedJobs.includes(job.id)) return false;
     
     return (
@@ -148,6 +153,11 @@ const JobSeekerDashboard: React.FC = () => {
       case 'verified_job': return <Shield className="w-3 h-3" />;
       case 'high_paying': return <TrendingUp className="w-3 h-3" />;
       case 'skill_match': return <Award className="w-3 h-3" />;
+      case 'entry_level': return <Award className="w-3 h-3" />;
+      case 'training_provided': return <Award className="w-3 h-3" />;
+      case 'good_for_freshers': return <Award className="w-3 h-3" />;
+      case 'flexible_hours': return <Clock className="w-3 h-3" />;
+      case 'part_time': return <Clock className="w-3 h-3" />;
       default: return null;
     }
   };
@@ -157,6 +167,11 @@ const JobSeekerDashboard: React.FC = () => {
       case 'verified_job': return t('verified_job');
       case 'high_paying': return t('high_paying');
       case 'skill_match': return `${t('skill_match')}`;
+      case 'entry_level': return 'Entry Level';
+      case 'training_provided': return 'Training Provided';
+      case 'good_for_freshers': return 'Good for Freshers';
+      case 'flexible_hours': return 'Flexible Hours';
+      case 'part_time': return 'Part Time';
       default: return tag;
     }
   };
@@ -167,6 +182,9 @@ const JobSeekerDashboard: React.FC = () => {
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg">
           <h1 className="text-2xl font-bold">{t('welcome')}, {user?.name}!</h1>
+          {user?.isNewUser && (
+            <p className="mt-2 text-blue-100">Welcome to your job search journey! Start by exploring the available opportunities below.</p>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -283,8 +301,10 @@ const JobSeekerDashboard: React.FC = () => {
         {/* Recommended Jobs Grid */}
         <Card className="bg-white shadow-md">
           <CardHeader>
-            <CardTitle>{t('recommended_jobs')} ({filteredJobs.length})</CardTitle>
-            <CardDescription>Jobs matching your profile and filters</CardDescription>
+            <CardTitle>{user?.isNewUser ? 'Available Jobs' : t('recommended_jobs')} ({filteredJobs.length})</CardTitle>
+            <CardDescription>
+              {user?.isNewUser ? 'Start your career with these entry-level opportunities' : 'Jobs matching your profile and filters'}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -373,25 +393,19 @@ const JobSeekerDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* My Applications Section */}
-        <Card className="bg-white shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Briefcase className="w-5 h-5" />
-              {t('my_applications')}
-            </CardTitle>
-            <CardDescription>Track your job applications and their progress</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {getJobApplications().length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <Briefcase className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <h3 className="text-lg font-medium mb-2">No Applications Yet</h3>
-                  <p>You haven't applied to any jobs yet. Start browsing jobs above!</p>
-                </div>
-              ) : (
-                getJobApplications().map((app) => (
+        {/* My Applications Section - Only show if user has applications */}
+        {getJobApplications().length > 0 && (
+          <Card className="bg-white shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="w-5 h-5" />
+                {t('my_applications')}
+              </CardTitle>
+              <CardDescription>Track your job applications and their progress</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {getJobApplications().map((app) => (
                   <Card key={app.jobId} className="border shadow-sm">
                     <CardHeader className="pb-3">
                       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -446,11 +460,11 @@ const JobSeekerDashboard: React.FC = () => {
                       </div>
                     </CardContent>
                   </Card>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Job Details Dialog */}
         <Dialog open={showJobDialog} onOpenChange={setShowJobDialog}>
