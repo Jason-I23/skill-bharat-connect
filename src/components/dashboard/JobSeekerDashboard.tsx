@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -10,9 +9,9 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { CheckboxDropdown } from '../ui/checkbox-dropdown';
-import { JobApplicationsModal } from '../JobApplicationsModal';
 import { JobProgressBar } from '../ui/job-progress-bar';
-import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X, Shield, TrendingUp, Award, AlertTriangle } from 'lucide-react';
+import { JobProviderModal } from '../ui/job-provider-modal';
+import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X, Shield, TrendingUp, Award, AlertTriangle, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import sampleData from '../../data/sampleData.json';
 
@@ -30,8 +29,8 @@ const JobSeekerDashboard: React.FC = () => {
   });
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
-  const [showApplicationsModal, setShowApplicationsModal] = useState(false);
-  const [applicationsModalType, setApplicationsModalType] = useState<'applied' | 'completed' | 'inProgress'>('applied');
+  const [showProviderModal, setShowProviderModal] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<any>(null);
 
   const completedJobs = ['job_2'];
   const inProgressJobs = ['job_1'];
@@ -64,10 +63,16 @@ const JobSeekerDashboard: React.FC = () => {
     setShowJobDialog(true);
   };
 
+  const handleProviderClick = (providerId: string) => {
+    const provider = sampleData.jobProviders.find(p => p.id === providerId);
+    setSelectedProvider(provider);
+    setShowProviderModal(true);
+  };
+
   const handleApplyJob = (jobId: string) => {
     if (!appliedJobs.includes(jobId)) {
       setAppliedJobs(prev => [...prev, jobId]);
-      toast.success(t('applied'));
+      toast.success('Job application submitted successfully!');
     }
     setShowJobDialog(false);
   };
@@ -75,6 +80,7 @@ const JobSeekerDashboard: React.FC = () => {
   const handleCancelApplication = (jobId: string) => {
     setAppliedJobs(prev => prev.filter(id => id !== jobId));
     toast.success('Application cancelled successfully!');
+    setShowJobDialog(false);
   };
 
   const clearFilters = () => {
@@ -85,25 +91,6 @@ const JobSeekerDashboard: React.FC = () => {
       minPayment: '',
       rating: ''
     });
-  };
-
-  const handleStatsClick = (type: 'applied' | 'completed' | 'inProgress') => {
-    setApplicationsModalType(type);
-    setShowApplicationsModal(true);
-  };
-
-  // Get jobs for stats modal based on type
-  const getJobsForStatsModal = (type: 'applied' | 'completed' | 'inProgress') => {
-    switch (type) {
-      case 'applied':
-        return getAppliedJobsWithDetails();
-      case 'completed':
-        return getCompletedJobsWithDetails();
-      case 'inProgress':
-        return getInProgressJobsWithDetails();
-      default:
-        return [];
-    }
   };
 
   const filteredJobs = sampleData.jobs.filter(job => {
@@ -154,21 +141,21 @@ const JobSeekerDashboard: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStatsClick('applied')}>
+          <Card className="bg-white shadow-md">
             <CardContent className="p-4 text-center">
               <Briefcase className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <div className="text-2xl font-bold">{stats.applied}</div>
               <div className="text-sm text-gray-600">{t('jobs_applied')}</div>
             </CardContent>
           </Card>
-          <Card className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStatsClick('completed')}>
+          <Card className="bg-white shadow-md">
             <CardContent className="p-4 text-center">
               <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
               <div className="text-2xl font-bold">{stats.completed}</div>
               <div className="text-sm text-gray-600">{t('jobs_completed')}</div>
             </CardContent>
           </Card>
-          <Card className="bg-white shadow-md cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStatsClick('inProgress')}>
+          <Card className="bg-white shadow-md">
             <CardContent className="p-4 text-center">
               <Clock className="w-8 h-8 mx-auto mb-2 text-orange-600" />
               <div className="text-2xl font-bold">{stats.inProgress}</div>
@@ -276,7 +263,7 @@ const JobSeekerDashboard: React.FC = () => {
                 return (
                   <div key={job.id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer bg-white" onClick={() => handleJobSelect(job)}>
                     {/* Job Tags at the top */}
-                    <div className="p-3 pb-0">
+                    <div className="p-4 pb-0">
                       <div className="flex flex-wrap gap-2 mb-3">
                         {job.tags?.map((tag) => (
                           <Badge key={tag} variant="secondary" className="text-xs font-medium">
@@ -293,11 +280,22 @@ const JobSeekerDashboard: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="p-3 pt-0 space-y-3">
+                    <div className="p-4 pt-0 space-y-3">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg">{job.title}</h3>
-                          <p className="text-gray-600">{job.company}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-gray-600">{job.company}</p>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleProviderClick(job.providerId);
+                              }}
+                              className="text-green-600 hover:text-green-700"
+                            >
+                              <UserCheck className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                         <div className="text-right">
                           <div className="text-lg font-bold text-green-600">₹{job.payment.toLocaleString()}</div>
@@ -325,6 +323,7 @@ const JobSeekerDashboard: React.FC = () => {
                       <div className="flex justify-between items-center">
                         <div className="flex gap-4 text-sm text-gray-600">
                           <span><Users className="w-4 h-4 inline mr-1" />{job.applicants} applied</span>
+                          <span><CheckCircle className="w-4 h-4 inline mr-1" />{job.shortlisted} shortlisted</span>
                         </div>
                         <Badge variant={
                           status === 'completed' ? 'default' :
@@ -428,7 +427,17 @@ const JobSeekerDashboard: React.FC = () => {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>{selectedJob?.title}</DialogTitle>
-              <DialogDescription>{selectedJob?.company}</DialogDescription>
+              <DialogDescription className="flex items-center gap-2">
+                {selectedJob?.company}
+                {selectedJob && (
+                  <button
+                    onClick={() => handleProviderClick(selectedJob.providerId)}
+                    className="text-green-600 hover:text-green-700"
+                  >
+                    <UserCheck className="w-4 h-4" />
+                  </button>
+                )}
+              </DialogDescription>
             </DialogHeader>
             {selectedJob && (
               <div className="space-y-4">
@@ -466,18 +475,28 @@ const JobSeekerDashboard: React.FC = () => {
                   <h4 className="font-semibold mb-2">Tools Required</h4>
                   <p className="text-gray-600">{selectedJob.tools}</p>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4 py-2">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-blue-600">{selectedJob.applicants}</div>
+                    <div className="text-sm text-gray-600">Applied</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-green-600">{selectedJob.shortlisted}</div>
+                    <div className="text-sm text-gray-600">Shortlisted</div>
+                  </div>
+                </div>
                 
                 <div className="flex justify-between items-center pt-4">
                   <div className="text-sm text-gray-600">
                     <Users className="w-4 h-4 inline mr-1" />
-                    {selectedJob.applicants} applicants • {selectedJob.recruited} recruited
+                    {selectedJob.recruited} recruited
                   </div>
-                  {!appliedJobs.includes(selectedJob.id) && (
+                  {!appliedJobs.includes(selectedJob.id) ? (
                     <Button onClick={() => handleApplyJob(selectedJob.id)}>
                       {t('apply_now')}
                     </Button>
-                  )}
-                  {appliedJobs.includes(selectedJob.id) && (
+                  ) : (
                     <Button variant="outline" onClick={() => handleCancelApplication(selectedJob.id)}>
                       Cancel Application
                     </Button>
@@ -488,75 +507,12 @@ const JobSeekerDashboard: React.FC = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Stats Modal for Job Lists */}
-        <Dialog open={showApplicationsModal} onOpenChange={setShowApplicationsModal}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {applicationsModalType === 'applied' && `${t('jobs_applied')} (${stats.applied})`}
-                {applicationsModalType === 'completed' && `${t('jobs_completed')} (${stats.completed})`}
-                {applicationsModalType === 'inProgress' && `${t('jobs_in_progress')} (${stats.inProgress})`}
-              </DialogTitle>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              {getJobsForStatsModal(applicationsModalType).length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <div className="text-lg font-medium mb-2">No jobs found</div>
-                  <p>
-                    {applicationsModalType === 'applied' && "You haven't applied to any jobs yet."}
-                    {applicationsModalType === 'completed' && "You haven't completed any jobs yet."}
-                    {applicationsModalType === 'inProgress' && "You don't have any jobs in progress."}
-                  </p>
-                </div>
-              ) : (
-                getJobsForStatsModal(applicationsModalType).map((job) => (
-                  <Card key={job.id} className="border shadow-sm">
-                    <CardContent className="p-4">
-                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold mb-2">{job.title}</h3>
-                          <p className="text-gray-600 mb-2">{job.company}</p>
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            <Badge variant="outline" className="text-xs">
-                              <MapPin className="w-3 h-3 mr-1" />
-                              {job.location}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              <Clock className="w-3 h-3 mr-1" />
-                              {job.type}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              <Star className="w-3 h-3 mr-1" />
-                              {job.rating}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-xl font-bold text-green-600 mb-2">
-                            ₹{job.payment.toLocaleString()}
-                          </div>
-                          <div className="text-sm text-gray-600">{job.paymentType}</div>
-                          <Badge 
-                            variant={
-                              applicationsModalType === 'completed' ? 'default' :
-                              applicationsModalType === 'inProgress' ? 'secondary' : 'outline'
-                            }
-                            className="mt-2"
-                          >
-                            {applicationsModalType === 'completed' ? 'Completed' :
-                             applicationsModalType === 'inProgress' ? 'In Progress' : 'Applied'}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* Job Provider Modal */}
+        <JobProviderModal
+          provider={selectedProvider}
+          isOpen={showProviderModal}
+          onClose={() => setShowProviderModal(false)}
+        />
       </div>
     </div>
   );

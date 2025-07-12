@@ -1,4 +1,3 @@
-
 {
   "states": [
     "Andhra Pradesh",
@@ -193,15 +192,96 @@
     ],
     "languages": []
   },
+  "jobProviders": [
+    {
+      "id": "provider_1",
+      "name": "Home Services Co.",
+      "email": "jobs@homeservices.com",
+      "phone": "9876543210",
+      "verified": true,
+      "previousJobsPosted": 25,
+      "jobsCompleted": 22,
+      "creditWorthiness": 4.5,
+      "paymentCompleteness": 4.8,
+      "overallRating": 4.6,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "id": "provider_2",
+      "name": "Wood Craft Industries",
+      "email": "hr@woodcraft.com",
+      "phone": "9123456789",
+      "verified": true,
+      "previousJobsPosted": 18,
+      "jobsCompleted": 16,
+      "creditWorthiness": 4.2,
+      "paymentCompleteness": 4.5,
+      "overallRating": 4.3,
+      "location": "Coimbatore, Tamil Nadu"
+    },
+    {
+      "id": "provider_3",
+      "name": "Power Solutions Ltd",
+      "email": "careers@powersolutions.com",
+      "phone": "9988776655",
+      "verified": true,
+      "previousJobsPosted": 32,
+      "jobsCompleted": 28,
+      "creditWorthiness": 4.7,
+      "paymentCompleteness": 4.9,
+      "overallRating": 4.8,
+      "location": "Bangalore, Karnataka"
+    },
+    {
+      "id": "provider_4",
+      "name": "Fashion Hub Ltd",
+      "email": "hr@fashionhub.com",
+      "phone": "9234567890",
+      "verified": true,
+      "previousJobsPosted": 15,
+      "jobsCompleted": 13,
+      "creditWorthiness": 4.0,
+      "paymentCompleteness": 4.3,
+      "overallRating": 4.1,
+      "location": "Mumbai, Maharashtra"
+    },
+    {
+      "id": "provider_5",
+      "name": "Green Gardens",
+      "email": "jobs@greengardens.com",
+      "phone": "9345678901",
+      "verified": true,
+      "previousJobsPosted": 12,
+      "jobsCompleted": 10,
+      "creditWorthiness": 3.8,
+      "paymentCompleteness": 4.2,
+      "overallRating": 4.0,
+      "location": "Pune, Maharashtra"
+    },
+    {
+      "id": "provider_6",
+      "name": "Digital Solutions Inc",
+      "email": "careers@digitalsolutions.com",
+      "phone": "9456789012",
+      "verified": true,
+      "previousJobsPosted": 28,
+      "jobsCompleted": 25,
+      "creditWorthiness": 4.6,
+      "paymentCompleteness": 4.7,
+      "overallRating": 4.6,
+      "location": "Hyderabad, Telangana"
+    }
+  ],
   "jobs": [
     {
       "id": "job_1",
       "title": "Residential Plumber Required",
       "company": "Home Services Co.",
+      "providerId": "provider_1",
       "location": "Chennai, Tamil Nadu",
       "workType": "plumbing",
       "type": "Full-time",
-      "description": "Looking for experienced plumber for residential plumbing work including pipe installation and repairs.",
+      "description": "Looking for experienced plumber for residential plumbing work including pipe installation and repairs. Must have knowledge of modern plumbing systems and be able to work independently.",
       "requirements": ["2+ years experience", "Own tools preferred", "Local area knowledge"],
       "salary": "₹15,000 - ₹25,000",
       "payment": 20000,
@@ -210,6 +290,7 @@
       "deadline": "2024-02-15",
       "status": "active",
       "applicants": 12,
+      "shortlisted": 3,
       "recruited": 2,
       "rating": 4.2,
       "skills": ["Plumbing", "Pipe Installation", "Water Systems"],
@@ -225,10 +306,11 @@
       "id": "job_2",
       "title": "Carpenter for Furniture Making",
       "company": "Wood Craft Industries",
+      "providerId": "provider_2",
       "location": "Coimbatore, Tamil Nadu",
       "workType": "carpentry",
       "type": "Contract",
-      "description": "Skilled carpenter needed for custom furniture manufacturing. Must have experience with modern woodworking tools.",
+      "description": "Skilled carpenter needed for custom furniture manufacturing. Must have experience with modern woodworking tools and attention to detail for high-quality furniture pieces.",
       "requirements": ["3+ years experience", "Knowledge of modern tools", "Quality focused"],
       "salary": "₹18,000 - ₹30,000",
       "payment": 24000,
@@ -237,6 +319,7 @@
       "deadline": "2024-02-12",
       "status": "active",
       "applicants": 8,
+      "shortlisted": 2,
       "recruited": 1,
       "rating": 4.5,
       "skills": ["Carpentry", "Furniture Making", "Woodworking"],
@@ -252,10 +335,11 @@
       "id": "job_3",
       "title": "Electrical Technician",
       "company": "Power Solutions Ltd",
+      "providerId": "provider_3",
       "location": "Bangalore, Karnataka",
       "workType": "electrical",
       "type": "Full-time",
-      "description": "Electrical technician required for industrial electrical maintenance and installation work.",
+      "description": "Electrical technician required for industrial electrical maintenance and installation work. Safety certification mandatory with experience in industrial environments.",
       "requirements": ["ITI in Electrical", "Safety certification", "Industrial experience"],
       "salary": "₹20,000 - ₹35,000",
       "payment": 27500,
@@ -264,6 +348,7 @@
       "deadline": "2024-02-10",
       "status": "active",
       "applicants": 15,
+      "shortlisted": 4,
       "recruited": 3,
       "rating": 4.3,
       "skills": ["Electrical Work", "Industrial Maintenance", "Safety Protocols"],
@@ -273,6 +358,93 @@
       "contactInfo": {
         "phone": "9988776655",
         "email": "careers@powersolutions.com"
+      }
+    },
+    {
+      "id": "job_4",
+      "title": "Fashion Designer Assistant",
+      "company": "Fashion Hub Ltd",
+      "providerId": "provider_4",
+      "location": "Mumbai, Maharashtra",
+      "workType": "fashion",
+      "type": "Part-time",
+      "description": "Creative fashion designer assistant needed for garment design and pattern making. Must have knowledge of current fashion trends and basic design software.",
+      "requirements": ["Diploma in Fashion Design", "Creative mindset", "Basic computer skills"],
+      "salary": "₹12,000 - ₹18,000",
+      "payment": 15000,
+      "paymentType": "monthly",
+      "postedDate": "2024-01-08",
+      "deadline": "2024-02-08",
+      "status": "active",
+      "applicants": 22,
+      "shortlisted": 5,
+      "recruited": 0,
+      "rating": 4.1,
+      "skills": ["Fashion Design", "Pattern Making", "Creativity"],
+      "tools": "Design software, measuring tools, sketching materials",
+      "tags": ["creative_job", "skill_match"],
+      "skillMatch": 70,
+      "contactInfo": {
+        "phone": "9234567890",
+        "email": "hr@fashionhub.com"
+      }
+    },
+    {
+      "id": "job_5",
+      "title": "Gardener & Landscaper",
+      "company": "Green Gardens",
+      "providerId": "provider_5",
+      "location": "Pune, Maharashtra",
+      "workType": "gardening",
+      "type": "Full-time",
+      "description": "Experienced gardener needed for residential and commercial landscaping projects. Knowledge of plant care, irrigation systems, and landscape design preferred.",
+      "requirements": ["2+ years gardening experience", "Plant knowledge", "Physical fitness"],
+      "salary": "₹14,000 - ₹22,000",
+      "payment": 18000,
+      "paymentType": "monthly",
+      "postedDate": "2024-01-05",
+      "deadline": "2024-02-05",
+      "status": "active",
+      "applicants": 18,
+      "shortlisted": 6,
+      "recruited": 1,
+      "rating": 4.0,
+      "skills": ["Gardening", "Landscaping", "Plant Care"],
+      "tools": "Gardening tools, irrigation equipment, lawn mower",
+      "tags": ["outdoor_job", "verified_job"],
+      "skillMatch": 65,
+      "contactInfo": {
+        "phone": "9345678901",
+        "email": "jobs@greengardens.com"
+      }
+    },
+    {
+      "id": "job_6",
+      "title": "Computer Operator",
+      "company": "Digital Solutions Inc",
+      "providerId": "provider_6",
+      "location": "Hyderabad, Telangana",
+      "workType": "it",
+      "type": "Full-time",
+      "description": "Computer operator needed for data entry, basic computer maintenance, and office support. Must be proficient in MS Office and have good typing speed.",
+      "requirements": ["Basic computer knowledge", "MS Office proficiency", "Good typing speed"],
+      "salary": "₹16,000 - ₹24,000",
+      "payment": 20000,
+      "paymentType": "monthly",
+      "postedDate": "2024-01-03",
+      "deadline": "2024-02-03",
+      "status": "active",
+      "applicants": 35,
+      "shortlisted": 8,
+      "recruited": 2,
+      "rating": 4.6,
+      "skills": ["Computer Skills", "Data Entry", "MS Office"],
+      "tools": "Computer, printer, basic office equipment",
+      "tags": ["office_job", "verified_job", "high_demand"],
+      "skillMatch": 88,
+      "contactInfo": {
+        "phone": "9456789012",
+        "email": "careers@digitalsolutions.com"
       }
     }
   ],
@@ -293,32 +465,27 @@
       "notes": "Application under review by HR team",
       "stages": [
         {
-          "name": "Application Submitted",
+          "name": "Applied",
           "completed": true,
           "date": "2024-01-16"
         },
         {
-          "name": "Profile Review",
+          "name": "Shortlisted",
           "completed": true,
           "date": "2024-01-17"
         },
         {
-          "name": "Interview Scheduled",
-          "completed": false,
-          "date": null
-        },
-        {
-          "name": "Technical Assessment",
-          "completed": false,
-          "date": null
-        },
-        {
-          "name": "Final Interview",
+          "name": "Doc Verification",
           "completed": false,
           "date": null
         },
         {
           "name": "Job Offer",
+          "completed": false,
+          "date": null
+        },
+        {
+          "name": "Completed",
           "completed": false,
           "date": null
         }
@@ -335,37 +502,32 @@
       "requirements": ["3+ years experience", "Knowledge of modern tools", "Quality focused"],
       "status": "shortlisted",
       "appliedDate": "2024-01-14",
-      "currentStage": 4,
+      "currentStage": 3,
       "nextUpdateDate": "2024-01-25",
-      "notes": "Scheduled for final interview on Monday",
+      "notes": "Documents verified, job offer pending",
       "stages": [
         {
-          "name": "Application Submitted",
+          "name": "Applied",
           "completed": true,
           "date": "2024-01-14"
         },
         {
-          "name": "Profile Review",
+          "name": "Shortlisted",
           "completed": true,
           "date": "2024-01-15"
         },
         {
-          "name": "Interview Scheduled",
-          "completed": true,
-          "date": "2024-01-18"
-        },
-        {
-          "name": "Technical Assessment",
+          "name": "Doc Verification",
           "completed": true,
           "date": "2024-01-20"
         },
         {
-          "name": "Final Interview",
+          "name": "Job Offer",
           "completed": false,
           "date": null
         },
         {
-          "name": "Job Offer",
+          "name": "Completed",
           "completed": false,
           "date": null
         }
@@ -382,41 +544,133 @@
       "requirements": ["ITI in Electrical", "Safety certification", "Industrial experience"],
       "status": "completed",
       "appliedDate": "2024-01-10",
-      "currentStage": 5,
+      "currentStage": 4,
       "nextUpdateDate": null,
-      "notes": "Job offer accepted. Starting date: February 1, 2024",
+      "notes": "Job completed successfully with excellent performance rating",
       "stages": [
         {
-          "name": "Application Submitted",
+          "name": "Applied",
           "completed": true,
           "date": "2024-01-10"
         },
         {
-          "name": "Profile Review",
+          "name": "Shortlisted",
           "completed": true,
           "date": "2024-01-11"
         },
         {
-          "name": "Interview Scheduled",
-          "completed": true,
-          "date": "2024-01-13"
-        },
-        {
-          "name": "Technical Assessment",
+          "name": "Doc Verification",
           "completed": true,
           "date": "2024-01-15"
         },
         {
-          "name": "Final Interview",
+          "name": "Job Offer",
           "completed": true,
           "date": "2024-01-18"
         },
         {
-          "name": "Job Offer",
+          "name": "Completed",
           "completed": true,
           "date": "2024-01-22"
         }
       ]
     }
-  ]
+  ],
+  "skillPerformance": [
+    {
+      "skill": "Plumbing",
+      "earningsPercentage": 45,
+      "totalEarnings": 20250
+    },
+    {
+      "skill": "Electrical Work",
+      "earningsPercentage": 35,
+      "totalEarnings": 15750
+    },
+    {
+      "skill": "General Maintenance",
+      "earningsPercentage": 20,
+      "totalEarnings": 9000
+    }
+  ],
+  "availableCourses": [
+    {
+      "id": "course_1",
+      "title": "Advanced Plumbing Techniques",
+      "provider": "NCS Skill Development",
+      "duration": "3 months",
+      "level": "Intermediate",
+      "certification": "Yes",
+      "ncsLink": "https://ncs.gov.in/courses/plumbing-advanced"
+    },
+    {
+      "id": "course_2",
+      "title": "Electrical Safety & Maintenance",
+      "provider": "NCS Skill Development",
+      "duration": "2 months",
+      "level": "Beginner",
+      "certification": "Yes",
+      "ncsLink": "https://ncs.gov.in/courses/electrical-safety"
+    },
+    {
+      "id": "course_3",
+      "title": "Digital Skills for Technicians",
+      "provider": "NCS Skill Development",
+      "duration": "1 month",
+      "level": "Beginner",
+      "certification": "Yes",
+      "ncsLink": "https://ncs.gov.in/courses/digital-skills"
+    },
+    {
+      "id": "course_4",
+      "title": "Customer Service Excellence",
+      "provider": "NCS Skill Development",
+      "duration": "2 weeks",
+      "level": "All Levels",
+      "certification": "Yes",
+      "ncsLink": "https://ncs.gov.in/courses/customer-service"
+    }
+  ],
+  "completedJobs": [
+    {
+      "id": "completed_job_1",
+      "title": "Office Electrical Maintenance",
+      "company": "Tech Corp",
+      "providerId": "provider_3",
+      "location": "Bangalore, Karnataka",
+      "completedDate": "2023-12-15",
+      "candidatesRequired": 2,
+      "payment": 35000,
+      "description": "Monthly electrical maintenance for office building",
+      "skills": ["Electrical Work", "Maintenance"]
+    },
+    {
+      "id": "completed_job_2",
+      "title": "Residential Plumbing Project",
+      "company": "Home Builders",
+      "providerId": "provider_1",
+      "location": "Chennai, Tamil Nadu",
+      "completedDate": "2023-11-20",
+      "candidatesRequired": 3,
+      "payment": 45000,
+      "description": "Complete plumbing installation for residential complex",
+      "skills": ["Plumbing", "Installation"]
+    }
+  ],
+  "newUserData": {
+    "jobSeeker": {
+      "appliedJobs": 0,
+      "completedJobs": 0,
+      "inProgressJobs": 0,
+      "totalEarnings": 0,
+      "skillPerformance": [],
+      "jobApplicationProgress": []
+    },
+    "jobProvider": {
+      "jobsPosted": 0,
+      "activeJobs": 0,
+      "completedJobs": 0,
+      "totalCandidatesHired": 0
+    }
+  }
 }
