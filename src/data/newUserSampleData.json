@@ -1,0 +1,77 @@
+
+{
+  "newJobSeeker": {
+    "stats": {
+      "applied": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "earnings": 0
+    },
+    "jobApplicationProgress": [],
+    "availableJobs": [
+      {
+        "id": "available_job_1",
+        "title": "Basic Plumbing Assistant",
+        "company": "QuickFix Solutions",
+        "location": "Chennai, Tamil Nadu",
+        "workType": "plumbing",
+        "description": "Entry-level position for plumbing assistant. Training provided.",
+        "requirements": ["Basic tools knowledge", "Willingness to learn"],
+        "salary": "12000",
+        "paymentType": "monthly",
+        "payment": 12000,
+        "type": "full-time",
+        "rating": 4.2,
+        "applicants": 5,
+        "shortlisted": 2,
+        "recruited": 0,
+        "skills": ["Basic Plumbing", "Tool Handling"],
+        "tools": "Basic plumbing tools provided",
+        "tags": ["entry_level"],
+        "providerId": "provider_1"
+      },
+      {
+        "id": "available_job_2",
+        "title": "Helper - Electrical Work",
+        "company": "PowerTech Services",
+        "location": "Bangalore, Karnataka",
+        "workType": "electrical",
+        "description": "Helper position for electrical maintenance work.",
+        "requirements": ["Basic safety knowledge", "Physical fitness"],
+        "salary": "400",
+        "paymentType": "daily",
+        "payment": 400,
+        "type": "part-time",
+        "rating": 4.0,
+        "applicants": 8,
+        "shortlisted": 3,
+        "recruited": 1,
+        "skills": ["Basic Electrical", "Safety Protocols"],
+        "tools": "Safety equipment provided",
+        "tags": ["training_provided"],
+        "providerId": "provider_2"
+      }
+    ]
+  },
+  "newJobProvider": {
+    "stats": {
+      "totalJobs": 0,
+      "activeJobs": 0,
+      "completedJobs": 0
+    },
+    "jobs": [],
+    "profile": {
+      "name": "New Provider",
+      "company": "Your Company",
+      "email": "",
+      "phone": "",
+      "location": "",
+      "verified": false,
+      "rating": 0,
+      "jobsPosted": 0,
+      "jobsCompleted": 0,
+      "paymentRating": 0,
+      "creditworthiness": 0
+    }
+  }
+}

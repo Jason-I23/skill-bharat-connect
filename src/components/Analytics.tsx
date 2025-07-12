@@ -1,10 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Badge } from './ui/badge';
 import { 
   BarChart, 
   Bar, 
@@ -20,7 +17,6 @@ import {
   Line
 } from 'recharts';
 import { TrendingUp, Users, IndianRupee, Calendar, Award } from 'lucide-react';
-import SkillsAnalytics from './SkillsAnalytics';
 
 const Analytics: React.FC = () => {
   const { user } = useAuth();
@@ -40,6 +36,13 @@ const Analytics: React.FC = () => {
     { name: 'Electrical', value: 30, color: '#10B981' },
     { name: 'Carpentry', value: 15, color: '#F59E0B' },
     { name: 'Others', value: 10, color: '#EF4444' }
+  ];
+
+  const skillsPerformance = [
+    { skill: 'Plumbing', earnings: 20250, percentage: 45 },
+    { skill: 'Electrical', earnings: 13500, percentage: 30 },
+    { skill: 'Carpentry', earnings: 6750, percentage: 15 },
+    { skill: 'Others', earnings: 4500, percentage: 10 }
   ];
 
   // Sample data for job provider analytics
@@ -64,7 +67,7 @@ const Analytics: React.FC = () => {
         <div className="container mx-auto px-4 py-6 space-y-6">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg">
             <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-            <p className="text-blue-100">Track your job performance and earnings</p>
+            <p className="text-blue-100">Complete overview of your job performance and growth</p>
           </div>
 
           {/* Quick Stats */}
@@ -99,85 +102,149 @@ const Analytics: React.FC = () => {
             </Card>
           </div>
 
-          <Tabs defaultValue="earnings" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="earnings">Earnings</TabsTrigger>
-              <TabsTrigger value="jobs">Job Analysis</TabsTrigger>
-              <TabsTrigger value="skills">Skills & Courses</TabsTrigger>
-            </TabsList>
+          {/* Earnings and Jobs Analysis */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Monthly Earnings Trend</CardTitle>
+                <CardDescription>Your earnings growth over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={monthlyEarnings}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip formatter={(value) => [`₹${value}`, 'Earnings']} />
+                    <Line type="monotone" dataKey="earnings" stroke="#3B82F6" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-            <TabsContent value="earnings">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Monthly Earnings Trend</CardTitle>
-                    <CardDescription>Your earnings growth over time</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={monthlyEarnings}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip formatter={(value) => [`₹${value}`, 'Earnings']} />
-                        <Line type="monotone" dataKey="earnings" stroke="#3B82F6" strokeWidth={2} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Jobs vs Earnings</CardTitle>
+                <CardDescription>Correlation between jobs completed and earnings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={monthlyEarnings}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="jobs" fill="#10B981" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Jobs vs Earnings</CardTitle>
-                    <CardDescription>Correlation between jobs completed and earnings</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={monthlyEarnings}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="jobs" fill="#10B981" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-                </Card>
+          {/* Job Categories and Skills Performance */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Jobs by Category</CardTitle>
+                <CardDescription>Distribution of your completed jobs by skill category</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={jobsByCategory}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: ${value}%`}
+                    >
+                      {jobsByCategory.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Skills Performance</CardTitle>
+                <CardDescription>Earnings breakdown by skill category</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {skillsPerformance.map((skill) => (
+                    <div key={skill.skill} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{skill.skill}</span>
+                        <div className="text-right">
+                          <div className="font-bold text-green-600">₹{skill.earnings.toLocaleString()}</div>
+                          <div className="text-sm text-gray-500">{skill.percentage}% of total</div>
+                        </div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
+                          style={{ width: `${skill.percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Skills Development Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Skill Development & Certifications</CardTitle>
+              <CardDescription>Enhance your skills with these recommended courses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
+                  <h4 className="font-semibold mb-2">Advanced Plumbing</h4>
+                  <p className="text-sm text-gray-600 mb-3">Master advanced plumbing techniques and certification</p>
+                  <a
+                    href="https://www.ncs.gov.sg/ncs-web/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Enroll on NCS Portal →
+                  </a>
+                </div>
+                <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
+                  <h4 className="font-semibold mb-2">Electrical Safety</h4>
+                  <p className="text-sm text-gray-600 mb-3">Safety protocols and electrical work certification</p>
+                  <a
+                    href="https://www.ncs.gov.sg/ncs-web/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Enroll on NCS Portal →
+                  </a>
+                </div>
+                <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
+                  <h4 className="font-semibold mb-2">Carpentry Mastery</h4>
+                  <p className="text-sm text-gray-600 mb-3">Advanced woodworking and furniture design</p>
+                  <a
+                    href="https://www.ncs.gov.sg/ncs-web/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Enroll on NCS Portal →
+                  </a>
+                </div>
               </div>
-            </TabsContent>
-
-            <TabsContent value="jobs">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Jobs by Category</CardTitle>
-                  <CardDescription>Distribution of your completed jobs by skill category</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={400}>
-                    <PieChart>
-                      <Pie
-                        data={jobsByCategory}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={120}
-                        dataKey="value"
-                        label={({ name, value }) => `${name}: ${value}%`}
-                      >
-                        {jobsByCategory.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="skills">
-              <SkillsAnalytics />
-            </TabsContent>
-          </Tabs>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -189,7 +256,7 @@ const Analytics: React.FC = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-lg shadow-lg">
           <h1 className="text-2xl font-bold">Provider Analytics</h1>
-          <p className="text-green-100">Monitor your job postings and candidate performance</p>
+          <p className="text-green-100">Complete overview of your job postings and candidate performance</p>
         </div>
 
         {/* Quick Stats */}
@@ -224,6 +291,7 @@ const Analytics: React.FC = () => {
           </Card>
         </div>
 
+        {/* Performance Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>

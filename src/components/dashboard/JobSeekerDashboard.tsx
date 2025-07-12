@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -36,17 +37,15 @@ const JobSeekerDashboard: React.FC = () => {
   const inProgressJobs = ['job_1'];
   const totalEarnings = 45000;
 
-  // Get actual applied jobs with details
+  // Helper functions
   const getAppliedJobsWithDetails = () => {
     return sampleData.jobs.filter(job => appliedJobs.includes(job.id));
   };
 
-  // Get completed jobs with details
   const getCompletedJobsWithDetails = () => {
     return sampleData.jobs.filter(job => completedJobs.includes(job.id));
   };
 
-  // Get in-progress jobs with details
   const getInProgressJobsWithDetails = () => {
     return sampleData.jobs.filter(job => inProgressJobs.includes(job.id));
   };
@@ -56,6 +55,38 @@ const JobSeekerDashboard: React.FC = () => {
     completed: completedJobs.length,
     inProgress: inProgressJobs.length,
     earnings: totalEarnings
+  };
+
+  // Create job application entry when user applies
+  const createJobApplication = (jobId: string) => {
+    const job = sampleData.jobs.find(j => j.id === jobId);
+    if (!job) return null;
+
+    return {
+      jobId: jobId,
+      jobTitle: job.title,
+      company: job.company,
+      appliedDate: new Date().toISOString(),
+      salary: job.payment,
+      currentStage: 0,
+      stages: [
+        { name: 'Applied', completed: true, date: new Date().toISOString() },
+        { name: 'Shortlisted', completed: false, date: null },
+        { name: 'Doc Verification', completed: false, date: null },
+        { name: 'Job Offer', completed: false, date: null },
+        { name: 'Completed', completed: false, date: null }
+      ],
+      notes: 'Application submitted successfully'
+    };
+  };
+
+  // Dynamic job applications based on applied jobs
+  const getJobApplications = () => {
+    return appliedJobs.map(jobId => {
+      const existingApp = sampleData.jobApplicationProgress.find(app => app.jobId === jobId);
+      if (existingApp) return existingApp;
+      return createJobApplication(jobId);
+    }).filter(Boolean);
   };
 
   const handleJobSelect = (job: any) => {
@@ -94,7 +125,6 @@ const JobSeekerDashboard: React.FC = () => {
   };
 
   const filteredJobs = sampleData.jobs.filter(job => {
-    // Remove completed jobs from available jobs
     if (completedJobs.includes(job.id)) return false;
     
     return (
@@ -354,14 +384,14 @@ const JobSeekerDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {sampleData.jobApplicationProgress.length === 0 ? (
+              {getJobApplications().length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   <Briefcase className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                   <h3 className="text-lg font-medium mb-2">No Applications Yet</h3>
                   <p>You haven't applied to any jobs yet. Start browsing jobs above!</p>
                 </div>
               ) : (
-                sampleData.jobApplicationProgress.map((app) => (
+                getJobApplications().map((app) => (
                   <Card key={app.jobId} className="border shadow-sm">
                     <CardHeader className="pb-3">
                       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
