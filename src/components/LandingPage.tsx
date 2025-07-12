@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Users, Briefcase, TrendingUp, Award, Shield, CheckCircle, Star, ExternalLink, BarChart } from 'lucide-react';
+import { Users, Briefcase, TrendingUp, Award, Shield, CheckCircle, Star, ExternalLink } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,10 +12,6 @@ const LandingPage: React.FC = () => {
 
   const handleAuthChoice = (action: 'login' | 'register') => {
     navigate(`/auth-choice?action=${action}`);
-  };
-
-  const handleAnalytics = () => {
-    navigate('/analytics');
   };
 
   return (
@@ -44,15 +40,6 @@ const LandingPage: React.FC = () => {
               className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3"
             >
               {t('register')}
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={handleAnalytics}
-              className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-3 flex items-center"
-            >
-              <BarChart className="w-4 h-4 mr-2" />
-              View Analytics
             </Button>
           </div>
         </div>
