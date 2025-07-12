@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -13,14 +12,15 @@ import { CheckboxDropdown } from '../ui/checkbox-dropdown';
 import { JobProgressBar } from '../ui/job-progress-bar';
 import { JobProviderModal } from '../ui/job-provider-modal';
 import { Briefcase, MapPin, Clock, Star, Users, CheckCircle, Calendar, IndianRupee, Filter, X, Shield, TrendingUp, Award, AlertTriangle, UserCheck } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '../ui/use-toast';
 import sampleData from '../../data/sampleData.json';
+import newUserData from '../../data/newUserSampleData.json';
 
 const JobSeekerDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, setUserAsExisting } = useAuth();
   const { t } = useLanguage();
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
-  const [appliedJobs, setAppliedJobs] = useState<string[]>(['job_1', 'job_3']);
+  const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
   const [filters, setFilters] = useState({
     locations: [] as string[],
     skills: [] as string[],
@@ -33,20 +33,35 @@ const JobSeekerDashboard: React.FC = () => {
   const [showProviderModal, setShowProviderModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState<any>(null);
 
-  const completedJobs = ['job_2'];
-  const inProgressJobs = ['job_1'];
-  const totalEarnings = 45000;
+  // Determine if user is new and load appropriate data
+  const isNewUser = user?.isNewUser === true;
+  const userData = isNewUser ? newUserData.newJobSeeker : sampleData;
+  const completedJobs = isNewUser ? [] : ['job_2'];
+  const inProgressJobs = isNewUser ? [] : ['job_1'];
+  const totalEarnings = isNewUser ? 0 : 45000;
+
+  // Initialize applied jobs based on user type
+  useEffect(() => {
+    if (isNewUser) {
+      setAppliedJobs([]);
+    } else {
+      setAppliedJobs(['job_1', 'job_3']);
+    }
+  }, [isNewUser]);
 
   // Helper functions
   const getAppliedJobsWithDetails = () => {
+    if (isNewUser) return [];
     return sampleData.jobs.filter(job => appliedJobs.includes(job.id));
   };
 
   const getCompletedJobsWithDetails = () => {
+    if (isNewUser) return [];
     return sampleData.jobs.filter(job => completedJobs.includes(job.id));
   };
 
   const getInProgressJobsWithDetails = () => {
+    if (isNewUser) return [];
     return sampleData.jobs.filter(job => inProgressJobs.includes(job.id));
   };
 
@@ -59,7 +74,8 @@ const JobSeekerDashboard: React.FC = () => {
 
   // Create job application entry when user applies
   const createJobApplication = (jobId: string) => {
-    const job = sampleData.jobs.find(j => j.id === jobId);
+    const availableJobs = isNewUser ? userData.availableJobs : sampleData.jobs;
+    const job = availableJobs.find((j: any) => j.id === jobId);
     if (!job) return null;
 
     return {
@@ -82,9 +98,13 @@ const JobSeekerDashboard: React.FC = () => {
 
   // Dynamic job applications based on applied jobs
   const getJobApplications = () => {
+    if (isNewUser && appliedJobs.length === 0) return [];
+    
     return appliedJobs.map(jobId => {
-      const existingApp = sampleData.jobApplicationProgress.find(app => app.jobId === jobId);
-      if (existingApp) return existingApp;
+      if (!isNewUser) {
+        const existingApp = sampleData.jobApplicationProgress.find(app => app.jobId === jobId);
+        if (existingApp) return existingApp;
+      }
       return createJobApplication(jobId);
     }).filter(Boolean);
   };
@@ -95,7 +115,8 @@ const JobSeekerDashboard: React.FC = () => {
   };
 
   const handleProviderClick = (providerId: string) => {
-    const provider = sampleData.jobProviders.find(p => p.id === providerId);
+    const providers = isNewUser ? [] : sampleData.jobProviders;
+    const provider = providers.find(p => p.id === providerId);
     setSelectedProvider(provider);
     setShowProviderModal(true);
   };
@@ -103,14 +124,25 @@ const JobSeekerDashboard: React.FC = () => {
   const handleApplyJob = (jobId: string) => {
     if (!appliedJobs.includes(jobId)) {
       setAppliedJobs(prev => [...prev, jobId]);
-      toast.success('Job application submitted successfully!');
+      if (isNewUser) {
+        setUserAsExisting();
+      }
+      toast({
+        title: "Success",
+        description: "Job application submitted successfully!",
+        className: "bg-green-500 text-white border-green-600",
+      });
     }
     setShowJobDialog(false);
   };
 
   const handleCancelApplication = (jobId: string) => {
     setAppliedJobs(prev => prev.filter(id => id !== jobId));
-    toast.success('Application cancelled successfully!');
+    toast({
+      title: "Success",
+      description: "Application cancelled successfully!",
+      className: "bg-green-500 text-white border-green-600",
+    });
     setShowJobDialog(false);
   };
 
@@ -124,12 +156,16 @@ const JobSeekerDashboard: React.FC = () => {
     });
   };
 
-  const filteredJobs = sampleData.jobs.filter(job => {
+  const availableJobs = isNewUser ? userData.availableJobs : sampleData.jobs;
+  const districts = isNewUser ? [] : sampleData.districts;
+  const skillCategories = isNewUser ? [] : sampleData.skillCategories;
+
+  const filteredJobs = availableJobs.filter((job: any) => {
     if (completedJobs.includes(job.id)) return false;
     
     return (
       (filters.locations.length === 0 || filters.locations.some(loc => job.location.toLowerCase().includes(loc.toLowerCase()))) &&
-      (filters.skills.length === 0 || filters.skills.some(skill => job.skills.some(jobSkill => jobSkill.toLowerCase().includes(skill.toLowerCase())))) &&
+      (filters.skills.length === 0 || filters.skills.some(skill => job.skills.some((jobSkill: string) => jobSkill.toLowerCase().includes(skill.toLowerCase())))) &&
       (!filters.type || job.paymentType === filters.type) &&
       (!filters.minPayment || job.payment >= parseInt(filters.minPayment)) &&
       (!filters.rating || job.rating >= parseFloat(filters.rating))
@@ -154,9 +190,9 @@ const JobSeekerDashboard: React.FC = () => {
 
   const getJobTagLabel = (tag: string) => {
     switch (tag) {
-      case 'verified_job': return t('verified_job');
-      case 'high_paying': return t('high_paying');
-      case 'skill_match': return `${t('skill_match')}`;
+      case 'verified_job': return t('verified_job') || 'Verified Job';
+      case 'high_paying': return t('high_paying') || 'High Paying';
+      case 'skill_match': return t('skill_match') || 'Skill Match';
       default: return tag;
     }
   };
@@ -166,7 +202,12 @@ const JobSeekerDashboard: React.FC = () => {
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg">
-          <h1 className="text-2xl font-bold">{t('welcome')}, {user?.name}!</h1>
+          <h1 className="text-2xl font-bold">
+            {isNewUser ? `Welcome to your new journey, ${user?.name}!` : `${t('welcome') || 'Welcome'}, ${user?.name}!`}
+          </h1>
+          {isNewUser && (
+            <p className="mt-2 text-blue-100">Start exploring available jobs and build your career!</p>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -175,21 +216,21 @@ const JobSeekerDashboard: React.FC = () => {
             <CardContent className="p-4 text-center">
               <Briefcase className="w-8 h-8 mx-auto mb-2 text-blue-600" />
               <div className="text-2xl font-bold">{stats.applied}</div>
-              <div className="text-sm text-gray-600">{t('jobs_applied')}</div>
+              <div className="text-sm text-gray-600">{t('jobs_applied') || 'Jobs Applied'}</div>
             </CardContent>
           </Card>
           <Card className="bg-white shadow-md">
             <CardContent className="p-4 text-center">
               <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
               <div className="text-2xl font-bold">{stats.completed}</div>
-              <div className="text-sm text-gray-600">{t('jobs_completed')}</div>
+              <div className="text-sm text-gray-600">{t('jobs_completed') || 'Jobs Completed'}</div>
             </CardContent>
           </Card>
           <Card className="bg-white shadow-md">
             <CardContent className="p-4 text-center">
               <Clock className="w-8 h-8 mx-auto mb-2 text-orange-600" />
               <div className="text-2xl font-bold">{stats.inProgress}</div>
-              <div className="text-sm text-gray-600">{t('jobs_in_progress')}</div>
+              <div className="text-sm text-gray-600">{t('jobs_in_progress') || 'Jobs in Progress'}</div>
             </CardContent>
           </Card>
           <Card className="bg-white shadow-md">
@@ -201,84 +242,86 @@ const JobSeekerDashboard: React.FC = () => {
           </Card>
         </div>
 
-        {/* Job Filters */}
-        <Card className="bg-white shadow-md">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5" />
-                {t('job_filters')}
-              </CardTitle>
-              <Button variant="outline" size="sm" onClick={clearFilters}>
-                <X className="w-4 h-4 mr-2" />
-                Clear Filters
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              <div>
-                <Label htmlFor="location">{t('location')}</Label>
-                <CheckboxDropdown
-                  options={sampleData.districts}
-                  selectedValues={filters.locations}
-                  onSelectionChange={(values) => setFilters(prev => ({ ...prev, locations: values }))}
-                  placeholder="Select locations"
-                  className="w-full"
-                />
+        {/* Job Filters - Only show if user has filter options */}
+        {!isNewUser && (
+          <Card className="bg-white shadow-md">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2">
+                  <Filter className="w-5 h-5" />
+                  {t('job_filters') || 'Job Filters'}
+                </CardTitle>
+                <Button variant="outline" size="sm" onClick={clearFilters}>
+                  <X className="w-4 h-4 mr-2" />
+                  Clear Filters
+                </Button>
               </div>
-              <div>
-                <Label htmlFor="skill">{t('skills')}</Label>
-                <CheckboxDropdown
-                  options={sampleData.skillCategories}
-                  selectedValues={filters.skills}
-                  onSelectionChange={(values) => setFilters(prev => ({ ...prev, skills: values }))}
-                  placeholder="Select skills"
-                  className="w-full"
-                />
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div>
+                  <Label htmlFor="location">{t('location') || 'Location'}</Label>
+                  <CheckboxDropdown
+                    options={districts}
+                    selectedValues={filters.locations}
+                    onSelectionChange={(values) => setFilters(prev => ({ ...prev, locations: values }))}
+                    placeholder="Select locations"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="skill">{t('skills') || 'Skills'}</Label>
+                  <CheckboxDropdown
+                    options={skillCategories}
+                    selectedValues={filters.skills}
+                    onSelectionChange={(values) => setFilters(prev => ({ ...prev, skills: values }))}
+                    placeholder="Select skills"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="type">Payment Type</Label>
+                  <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="hourly">Hourly</SelectItem>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="fixed">Fixed Project</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="minPayment">Min Payment (₹)</Label>
+                  <Input
+                    id="minPayment"
+                    type="number"
+                    placeholder="Min amount"
+                    value={filters.minPayment}
+                    onChange={(e) => setFilters(prev => ({ ...prev, minPayment: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="rating">Min Rating</Label>
+                  <Select value={filters.rating} onValueChange={(value) => setFilters(prev => ({ ...prev, rating: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select rating" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="4.5">4.5+ stars</SelectItem>
+                      <SelectItem value="4.0">4.0+ stars</SelectItem>
+                      <SelectItem value="3.5">3.5+ stars</SelectItem>
+                      <SelectItem value="3.0">3.0+ stars</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="type">Payment Type</Label>
-                <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hourly">Hourly</SelectItem>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="fixed">Fixed Project</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="minPayment">Min Payment (₹)</Label>
-                <Input
-                  id="minPayment"
-                  type="number"
-                  placeholder="Min amount"
-                  value={filters.minPayment}
-                  onChange={(e) => setFilters(prev => ({ ...prev, minPayment: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="rating">Min Rating</Label>
-                <Select value={filters.rating} onValueChange={(value) => setFilters(prev => ({ ...prev, rating: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select rating" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="4.5">4.5+ stars</SelectItem>
-                    <SelectItem value="4.0">4.0+ stars</SelectItem>
-                    <SelectItem value="3.5">3.5+ stars</SelectItem>
-                    <SelectItem value="3.0">3.0+ stars</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recommended Jobs Grid */}
         <Card className="bg-white shadow-md">
@@ -378,7 +421,7 @@ const JobSeekerDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Briefcase className="w-5 h-5" />
-              {t('my_applications')}
+              {t('my_applications') || 'My Applications'}
             </CardTitle>
             <CardDescription>Track your job applications and their progress</CardDescription>
           </CardHeader>
