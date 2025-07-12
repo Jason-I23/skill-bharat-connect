@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -8,895 +9,982 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { CheckboxDropdown } from '../ui/checkbox-dropdown';
-import { Briefcase, Plus, Eye, Edit, Trash2, Users, MapPin, IndianRupee, Clock, Star, CheckCircle, AlertCircle, UserCheck, FileText, RotateCcw } from 'lucide-react';
-import { toast } from 'sonner';
+import { Switch } from '../ui/switch';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Plus, Eye, Edit, Trash, MapPin, Clock, Users, Star, CheckCircle, DollarSign, Award, Phone, Mail, FileText, Shield, Calendar, UserCheck } from 'lucide-react';
+import { useToast } from '../../hooks/use-toast';
 import sampleData from '../../data/sampleData.json';
-import newUserData from '../../data/newUserData.json';
 
 interface Job {
   id: string;
   title: string;
-  company: string;
-  location: string;
-  workType: string;
   description: string;
-  requirements: string[];
+  workType: string;
+  toolsRequired: string;
+  location: string;
   salary: string;
   paymentType: string;
-  payment: number;
-  type: string;
-  rating: number;
-  applicants: number;
-  shortlisted: number;
-  recruited: number;
-  skills: string[];
-  tools: string;
-  tags?: string[];
-  providerId: string;
-  status?: string;
-  candidatesRequired?: number;
-  completedDate?: string;
+  candidatesRequired: number;
+  estimatedEndDate: string;
+  insuranceAvailable: boolean;
+  status: 'active' | 'paused' | 'completed';
+  applicants?: number;
+  shortlisted?: number;
 }
 
-type CandidateStatus = "applied" | "selected" | "offer_sent" | "documents_requested";
+interface Candidate {
+  id: string;
+  name: string;
+  rating: number;
+  experience: string;
+  location: string;
+  skills: string[];
+  phone: string;
+  email: string;
+  fit: 'excellent' | 'good' | 'poor';
+  applied: string;
+  status: 'applied' | 'selected' | 'offer_sent' | 'documents_requested';
+  providerRating?: number;
+}
 
 const JobProviderDashboard: React.FC = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { toast } = useToast();
   
-  // Use new user data if user is new, otherwise use existing data
-  const userData = user?.isNewUser ? newUserData.newJobProvider : sampleData;
-  const initialJobs = user?.isNewUser ? [] : sampleData.jobs;
-  // Fix: Access candidates from the correct source
-  const initialCandidates = user?.isNewUser ? [] : sampleData.candidates || [];
-  
-  // State management
-  const [jobs, setJobs] = useState<Job[]>(initialJobs);
-  const [showCreateJob, setShowCreateJob] = useState(false);
-  const [showJobDetails, setShowJobDetails] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [candidateStatuses, setCandidateStatuses] = useState<Record<string, CandidateStatus>>({});
-  const [selectedCandidates, setSelectedCandidates] = useState<Record<string, string[]>>({});
-  
-  // Form states
-  const [jobForm, setJobForm] = useState({
-    title: '',
-    company: user?.name || '',
-    location: '',
-    workType: '',
-    description: '',
-    requirements: [] as string[],
-    salary: '',
-    paymentType: 'monthly' as string,
-    type: 'full-time' as string,
-    skills: [] as string[],
-    tools: '',
-    candidatesRequired: 1
-  });
-  const [requirementInput, setRequirementInput] = useState('');
-  const [editingJob, setEditingJob] = useState<Job | null>(null);
-  const [showReactivateJobs, setShowReactivateJobs] = useState(false);
-
-  // Get dashboard stats
-  const stats = {
-    totalJobs: jobs.length,
-    activeJobs: jobs.filter(job => job.status === 'active' || !job.status).length,
-    completedJobs: jobs.filter(job => job.status === 'completed').length,
-    totalApplications: jobs.reduce((sum, job) => sum + (job.applicants || 0), 0)
-  };
-
-  // Get provider profile data
-  const providerProfile = user?.isNewUser ? newUserData.newJobProvider.profile : {
-    name: user?.name || '',
-    company: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    location: '',
-    verified: true,
-    rating: 4.2,
-    jobsPosted: jobs.length,
-    jobsCompleted: stats.completedJobs,
-    paymentRating: 4.5,
-    creditworthiness: 85
-  };
-
-  // Get inactive jobs for reactivation
-  const inactiveJobs = jobs.filter(job => job.status === 'completed' || job.status === 'inactive');
-
-  // Form handlers
-  const resetJobForm = () => {
-    setJobForm({
-      title: '',
-      company: user?.name || '',
-      location: '',
-      workType: '',
-      description: '',
-      requirements: [],
-      salary: '',
+  const [jobs, setJobs] = useState<Job[]>([
+    {
+      id: 'job_1',
+      title: 'Residential Plumber',
+      description: 'Fix leaking pipes and install new plumbing fixtures in residential properties. Experience required in pipe fitting and basic plumbing repairs.',
+      workType: 'plumbing',
+      toolsRequired: 'Pipe wrench, soldering kit, measuring tape',
+      location: 'Chennai, Tamil Nadu',
+      salary: '15000',
       paymentType: 'monthly',
-      type: 'full-time',
-      skills: [],
-      tools: '',
-      candidatesRequired: 1
-    });
-    setRequirementInput('');
-    setEditingJob(null);
-  };
-
-  const addRequirement = () => {
-    if (requirementInput.trim()) {
-      setJobForm(prev => ({
-        ...prev,
-        requirements: [...prev.requirements, requirementInput.trim()]
-      }));
-      setRequirementInput('');
+      candidatesRequired: 2,
+      estimatedEndDate: '2024-02-15',
+      insuranceAvailable: true,
+      status: 'active',
+      applicants: 12,
+      shortlisted: 3
+    },
+    {
+      id: 'job_2',
+      title: 'Electrical Maintenance',
+      description: 'Maintain and repair electrical systems in commercial buildings. Must be familiar with safety protocols.',
+      workType: 'electrical',
+      toolsRequired: 'Multimeter, wire strippers, electrical tester',
+      location: 'Bangalore, Karnataka',
+      salary: '25000',
+      paymentType: 'monthly',
+      candidatesRequired: 1,
+      estimatedEndDate: '2024-03-01',
+      insuranceAvailable: false,
+      status: 'active',
+      applicants: 8,
+      shortlisted: 2
+    },
+    {
+      id: 'job_3',
+      title: 'Furniture Carpenter',
+      description: 'Create custom furniture and repair wooden structures for residential clients.',
+      workType: 'carpentry',
+      toolsRequired: 'Saw, hammer, chisel, measuring tools',
+      location: 'Mumbai, Maharashtra',
+      salary: '800',
+      paymentType: 'daily',
+      candidatesRequired: 3,
+      estimatedEndDate: '2024-01-30',
+      insuranceAvailable: true,
+      status: 'completed',
+      applicants: 15,
+      shortlisted: 4
     }
+  ]);
+
+  const [showCreateJobModal, setShowCreateJobModal] = useState(false);
+  const [showReactivateModal, setShowReactivateModal] = useState(false);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [selectedJobForCandidates, setSelectedJobForCandidates] = useState<Job | null>(null);
+  const [selectedJobForCompletion, setSelectedJobForCompletion] = useState<Job | null>(null);
+  const [selectedCandidateProfile, setSelectedCandidateProfile] = useState<Candidate | null>(null);
+  const [showStatsModal, setShowStatsModal] = useState<string | null>(null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [candidateRating, setCandidateRating] = useState(5);
+  const [completedJobToRate, setCompletedJobToRate] = useState<Job | null>(null);
+  const [candidateStatuses, setCandidateStatuses] = useState<Record<string, 'applied' | 'selected' | 'offer_sent' | 'documents_requested'>>({});
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    workType: '',
+    toolsRequired: '',
+    location: '',
+    salary: '',
+    paymentType: 'hourly',
+    candidatesRequired: 1,
+    estimatedEndDate: '',
+    insuranceAvailable: false
+  });
+
+  // Sample completed jobs for reactivation
+  const completedJobsForReactivation = [
+    {
+      id: 'completed_1',
+      title: 'Kitchen Renovation Plumber',
+      description: 'Complete plumbing work for kitchen renovation project',
+      workType: 'plumbing',
+      location: 'Delhi, India',
+      salary: '18000',
+      paymentType: 'monthly',
+      completedDate: '2024-01-10'
+    },
+    {
+      id: 'completed_2',
+      title: 'Office Electrical Setup',
+      description: 'Electrical wiring and setup for new office space',
+      workType: 'electrical',
+      location: 'Mumbai, Maharashtra',
+      salary: '22000',
+      paymentType: 'fixed',
+      completedDate: '2024-01-05'
+    }
+  ];
+
+  // Get candidates with their current status
+  const getCandidatesForJob = (jobId: string): Candidate[] => {
+    const candidates: Candidate[] = [
+      {
+        id: 'c1',
+        name: 'Rajesh Kumar',
+        rating: 4.8,
+        experience: '5 years',
+        location: 'Chennai, Tamil Nadu',
+        skills: ['Plumbing', 'Pipe Fitting', 'Water Systems'],
+        phone: '9876543210',
+        email: 'rajesh.kumar@email.com',
+        fit: 'excellent',
+        applied: '2024-01-15',
+        status: candidateStatuses[`${jobId}_c1`] || 'applied'
+      },
+      {
+        id: 'c2',
+        name: 'Amit Sharma',
+        rating: 4.5,
+        experience: '3 years',
+        location: 'Chennai, Tamil Nadu',
+        skills: ['Plumbing', 'Electrical Work'],
+        phone: '9123456789',
+        email: 'amit.sharma@email.com',
+        fit: 'good',
+        applied: '2024-01-16',
+        status: candidateStatuses[`${jobId}_c2`] || 'applied'
+      },
+      {
+        id: 'c3',
+        name: 'Suresh Patel',
+        rating: 3.2,
+        experience: '1 year',
+        location: 'Coimbatore, Tamil Nadu',
+        skills: ['Basic Plumbing'],
+        phone: '9988776655',
+        email: 'suresh.patel@email.com',
+        fit: 'poor',
+        applied: '2024-01-17',
+        status: candidateStatuses[`${jobId}_c3`] || 'applied'
+      }
+    ];
+    return candidates;
   };
 
-  const removeRequirement = (index: number) => {
-    setJobForm(prev => ({
-      ...prev,
-      requirements: prev.requirements.filter((_, i) => i !== index)
-    }));
+  const handleInputChange = (field: string, value: string | number | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleCreateJob = () => {
-    if (!jobForm.title || !jobForm.description || !jobForm.salary) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
     const newJob: Job = {
-      id: `job_${Date.now()}`,
-      ...jobForm,
-      payment: parseInt(jobForm.salary),
-      rating: 0,
+      id: 'job_' + Date.now(),
+      ...formData,
+      status: 'active',
       applicants: 0,
-      shortlisted: 0,
-      recruited: 0,
-      tags: ['new_posting'],
-      providerId: user?.id || '',
-      status: 'active'
+      shortlisted: 0
     };
-
-    if (editingJob) {
-      setJobs(prev => prev.map(job => job.id === editingJob.id ? { ...newJob, id: editingJob.id } : job));
-      toast.success('Job updated successfully!');
-    } else {
-      setJobs(prev => [...prev, newJob]);
-      toast.success('Job posted successfully!');
-    }
-
-    setShowCreateJob(false);
-    resetJobForm();
+    setJobs([newJob, ...jobs]);
+    resetForm();
+    setShowCreateJobModal(false);
+    toast({
+      title: "Success",
+      description: "Job posted successfully!",
+    });
   };
 
-  const handleReactivateJob = (jobId: string) => {
-    const jobToReactivate = inactiveJobs.find(job => job.id === jobId);
-    if (jobToReactivate) {
-      // Pre-fill form with job data
-      setJobForm({
-        title: jobToReactivate.title,
-        company: jobToReactivate.company,
-        location: jobToReactivate.location,
-        workType: jobToReactivate.workType,
-        description: jobToReactivate.description,
-        requirements: jobToReactivate.requirements,
-        salary: jobToReactivate.salary,
-        paymentType: jobToReactivate.paymentType,
-        type: jobToReactivate.type,
-        skills: jobToReactivate.skills,
-        tools: jobToReactivate.tools,
-        candidatesRequired: jobToReactivate.candidatesRequired || 1
-      });
-      setEditingJob({ ...jobToReactivate, status: 'active' });
-      setShowReactivateJobs(false);
-      setShowCreateJob(true);
-    }
+  const handleUpdateJob = () => {
+    if (!editingJob) return;
+    
+    setJobs(jobs.map(job => 
+      job.id === editingJob.id 
+        ? { ...job, ...formData }
+        : job
+    ));
+    setEditingJob(null);
+    setShowCreateJobModal(false);
+    resetForm();
+    toast({
+      title: "Success",
+      description: "Job updated successfully!",
+    });
+  };
+
+  const handleReactivateJob = (completedJob: any) => {
+    const reactivatedJob: Job = {
+      id: 'job_' + Date.now(),
+      title: completedJob.title,
+      description: completedJob.description,
+      workType: completedJob.workType,
+      toolsRequired: 'Standard tools required',
+      location: completedJob.location,
+      salary: completedJob.salary,
+      paymentType: completedJob.paymentType,
+      candidatesRequired: 1,
+      estimatedEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      insuranceAvailable: false,
+      status: 'active',
+      applicants: 0,
+      shortlisted: 0
+    };
+    
+    setJobs([reactivatedJob, ...jobs]);
+    setShowReactivateModal(false);
+    toast({
+      title: "Job Reactivated",
+      description: `"${completedJob.title}" has been reactivated and is now live.`,
+    });
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      workType: '',
+      toolsRequired: '',
+      location: '',
+      salary: '',
+      paymentType: 'hourly',
+      candidatesRequired: 1,
+      estimatedEndDate: '',
+      insuranceAvailable: false
+    });
   };
 
   const handleEditJob = (job: Job) => {
-    setJobForm({
+    setEditingJob(job);
+    setFormData({
       title: job.title,
-      company: job.company,
-      location: job.location,
-      workType: job.workType,
       description: job.description,
-      requirements: job.requirements,
+      workType: job.workType,
+      toolsRequired: job.toolsRequired,
+      location: job.location,
       salary: job.salary,
       paymentType: job.paymentType,
-      type: job.type,
-      skills: job.skills,
-      tools: job.tools,
-      candidatesRequired: job.candidatesRequired || 1
+      candidatesRequired: job.candidatesRequired,
+      estimatedEndDate: job.estimatedEndDate,
+      insuranceAvailable: job.insuranceAvailable
     });
-    setEditingJob(job);
-    setShowCreateJob(true);
+    setShowCreateJobModal(true);
   };
 
   const handleDeleteJob = (jobId: string) => {
-    setJobs(prev => prev.filter(job => job.id !== jobId));
-    toast.success('Job deleted successfully!');
+    setJobs(jobs.filter(job => job.id !== jobId));
+    toast({
+      title: "Success",
+      description: "Job deleted successfully!",
+    });
   };
 
-  const handleJobSelect = (job: Job) => {
-    setSelectedJob(job);
-    setShowJobDetails(true);
+  const handleCompleteJob = (job: Job) => {
+    setJobs(jobs.map(j => 
+      j.id === job.id 
+        ? { ...j, status: 'completed' as const }
+        : j
+    ));
+    setSelectedJobForCompletion(null);
+    setCompletedJobToRate(job);
+    setShowRatingModal(true);
   };
 
-  const handleCandidateAction = (candidateId: string, action: CandidateStatus, jobId?: string) => {
-    setCandidateStatuses(prev => ({
-      ...prev,
-      [candidateId]: action
-    }));
+  const handleRateCandidate = () => {
+    toast({
+      title: "Rating Submitted",
+      description: `Candidate rated ${candidateRating} stars. Payment has been processed.`,
+    });
+    setShowRatingModal(false);
+    setCompletedJobToRate(null);
+    setCandidateRating(5);
+  };
 
-    // Persist selection when moving between states
-    if (jobId && action === "selected") {
-      setSelectedCandidates(prev => ({
-        ...prev,
-        [jobId]: [...(prev[jobId] || []), candidateId]
-      }));
-    }
-
+  const handleCandidateAction = (jobId: string, candidateId: string, action: 'applied' | 'selected' | 'offer_sent' | 'documents_requested') => {
+    const key = `${jobId}_${candidateId}`;
+    setCandidateStatuses(prev => ({ ...prev, [key]: action }));
+    
     const actionMessages = {
-      selected: 'Candidate shortlisted',
-      offer_sent: 'Job offer sent to candidate',
-      documents_requested: 'Document verification requested'
+      'selected': 'Candidate selected successfully!',
+      'offer_sent': 'Job offer sent to candidate!',
+      'documents_requested': 'Document request sent to candidate!'
     };
+    
+    toast({
+      title: "Action Completed",
+      description: actionMessages[action] || "Action completed successfully!",
+    });
+  };
 
-    if (action !== 'applied') {
-      toast.success(actionMessages[action]);
+  const stats = {
+    totalJobs: jobs.length,
+    activeJobs: jobs.filter(job => job.status === 'active').length,
+    completedJobs: jobs.filter(job => job.status === 'completed').length
+  };
+
+  const getStatsModalData = (type: string) => {
+    switch (type) {
+      case 'total': return jobs;
+      case 'active': return jobs.filter(job => job.status === 'active');
+      case 'completed': return jobs.filter(job => job.status === 'completed');
+      default: return [];
     }
   };
 
-  const getCandidatesForJob = (jobId: string) => {
-    if (user?.isNewUser) return [];
-    return initialCandidates.filter(candidate => 
-      candidate.appliedJobs?.includes(jobId)
-    );
+  const getFitColor = (fit: string) => {
+    switch (fit) {
+      case 'excellent': return 'text-green-600 bg-green-50 border-green-200';
+      case 'good': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'poor': return 'text-red-600 bg-red-50 border-red-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
   };
 
-  const getCandidatesByFit = (jobId: string) => {
-    const candidates = getCandidatesForJob(jobId);
-    const highFit = candidates.filter(c => c.skillMatch >= 80);
-    const mediumFit = candidates.filter(c => c.skillMatch >= 60 && c.skillMatch < 80);
-    const lowFit = candidates.filter(c => c.skillMatch < 60);
-    
-    return { highFit, mediumFit, lowFit };
+  const getFitEmphasis = (fit: string) => {
+    switch (fit) {
+      case 'excellent': return 'ring-2 ring-green-300 shadow-lg transform scale-105';
+      case 'good': return 'ring-1 ring-blue-200 shadow-md';
+      case 'poor': return 'opacity-75';
+      default: return '';
+    }
   };
 
-  const renderCandidateCard = (candidate: any, jobId: string) => {
-    const status = candidateStatuses[candidate.id] || "applied";
-    const isSelected = selectedCandidates[jobId]?.includes(candidate.id);
-    
-    return (
-      <Card key={candidate.id} className={`p-4 ${isSelected ? 'ring-2 ring-blue-500' : ''}`}>
-        <div className="flex justify-between items-start mb-3">
-          <div>
-            <h4 className="font-semibold">{candidate.name}</h4>
-            <p className="text-sm text-gray-600">{candidate.location}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge variant="outline" className="text-xs">
-                {candidate.skillMatch}% Match
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                <Star className="w-3 h-3 mr-1" />
-                {candidate.rating}
-              </Badge>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-medium">₹{candidate.expectedSalary?.toLocaleString()}</p>
-            <p className="text-xs text-gray-500">{candidate.salaryType}</p>
-          </div>
-        </div>
-        
-        <div className="space-y-2 mb-3">
-          <div className="flex flex-wrap gap-1">
-            {candidate.skills?.slice(0, 3).map((skill: string, idx: number) => (
-              <Badge key={idx} variant="secondary" className="text-xs">{skill}</Badge>
-            ))}
-            {candidate.skills?.length > 3 && (
-              <Badge variant="secondary" className="text-xs">+{candidate.skills.length - 3}</Badge>
-            )}
-          </div>
-          <p className="text-xs text-gray-600 line-clamp-2">{candidate.bio}</p>
-        </div>
+  const getButtonText = (status: string, action: 'select' | 'document') => {
+    if (action === 'select') {
+      switch (status) {
+        case 'selected': return 'Send Job Offer';
+        case 'offer_sent': return 'Job Offer Sent';
+        default: return 'Select Candidate';
+      }
+    } else {
+      switch (status) {
+        case 'documents_requested': return 'Documents Requested';
+        default: return 'Request Documents';
+      }
+    }
+  };
 
-        <div className="flex gap-2">
-          {status === "applied" && (
-            <Button
-              size="sm"
-              onClick={() => handleCandidateAction(candidate.id, "selected", jobId)}
-              className="flex-1"
-            >
-              <UserCheck className="w-4 h-4 mr-1" />
-              Select
-            </Button>
-          )}
-          {status === "selected" && (
-            <>
-              <Button
-                size="sm"
-                onClick={() => handleCandidateAction(candidate.id, "offer_sent", jobId)}
-                className="flex-1"
-              >
-                Send Offer
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleCandidateAction(candidate.id, "documents_requested", jobId)}
-              >
-                <FileText className="w-4 h-4" />
-              </Button>
-            </>
-          )}
-          {status === "offer_sent" && (
-            <div className="flex-1 text-center">
-              <Badge variant="default" className="text-xs">Offer Sent</Badge>
-            </div>
-          )}
-          {status === "documents_requested" && (
-            <div className="flex-1 text-center">
-              <Badge variant="secondary" className="text-xs">Docs Requested</Badge>
-            </div>
-          )}
-        </div>
-      </Card>
-    );
+  const handleViewCandidateProfile = (candidate: Candidate) => {
+    setSelectedCandidateProfile(candidate);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100">
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 rounded-lg shadow-lg">
-          <div className="flex justify-between items-center">
+    <div className="container mx-auto px-4 py-6 space-y-6 bg-gray-50 min-h-screen">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-lg">
+        <h1 className="text-2xl font-bold mb-2">{t('welcome')}, {user?.name}!</h1>
+        <p className="opacity-90">Manage your jobs and find skilled professionals</p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowStatsModal('total')}>
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-blue-600">{stats.totalJobs}</div>
+            <div className="text-sm text-gray-600">Total Jobs Posted</div>
+          </CardContent>
+        </Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowStatsModal('active')}>
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-green-600">{stats.activeJobs}</div>
+            <div className="text-sm text-gray-600">Active Jobs</div>
+          </CardContent>
+        </Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowStatsModal('completed')}>
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-orange-600">{stats.completedJobs}</div>
+            <div className="text-sm text-gray-600">Completed Jobs</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Jobs Grid */}
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold">{t('welcome')}, {user?.name}!</h1>
-              {user?.isNewUser ? (
-                <p className="mt-2 text-purple-100">Start by creating your first job posting to find the perfect candidates.</p>
-              ) : (
-                <p className="mt-2 text-purple-100">Manage your job postings and find the best candidates</p>
-              )}
+              <CardTitle>Your Posted Jobs ({jobs.length})</CardTitle>
+              <CardDescription>Manage your active job postings</CardDescription>
             </div>
-            <Button 
-              onClick={() => {
-                resetJobForm();
-                setShowCreateJob(true);
-              }}
-              className="bg-white text-purple-600 hover:bg-purple-50"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create Job
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setShowReactivateModal(true)} className="w-full sm:w-auto">
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Reactivate Jobs
+              </Button>
+              <Button onClick={() => setShowCreateJobModal(true)} className="w-full sm:w-auto">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Job
+              </Button>
+            </div>
           </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white shadow-md">
-            <CardContent className="p-4 text-center">
-              <Briefcase className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-              <div className="text-2xl font-bold">{stats.totalJobs}</div>
-              <div className="text-sm text-gray-600">Total Jobs</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white shadow-md">
-            <CardContent className="p-4 text-center">
-              <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
-              <div className="text-2xl font-bold">{stats.activeJobs}</div>
-              <div className="text-sm text-gray-600">Active Jobs</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white shadow-md">
-            <CardContent className="p-4 text-center">
-              <AlertCircle className="w-8 h-8 mx-auto mb-2 text-orange-600" />
-              <div className="text-2xl font-bold">{stats.completedJobs}</div>
-              <div className="text-sm text-gray-600">Completed</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white shadow-md">
-            <CardContent className="p-4 text-center">
-              <Users className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-              <div className="text-2xl font-bold">{stats.totalApplications}</div>
-              <div className="text-sm text-gray-600">Applications</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* My Jobs Section */}
-        <Card className="bg-white shadow-md">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2">
-                <Briefcase className="w-5 h-5" />
-                My Job Postings
-              </CardTitle>
-              <div className="flex gap-2">
-                {!user?.isNewUser && inactiveJobs.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowReactivateJobs(true)}
-                  >
-                    <RotateCcw className="w-4 h-4 mr-1" />
-                    Reactivate Jobs
-                  </Button>
-                )}
-                <Button
-                  onClick={() => {
-                    resetJobForm();
-                    setShowCreateJob(true);
-                  }}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Job
-                </Button>
-              </div>
+        </CardHeader>
+        <CardContent>
+          {jobs.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <div className="text-lg font-medium mb-2">No jobs posted yet</div>
+              <p>Create your first job posting to get started.</p>
             </div>
-          </CardHeader>
-          <CardContent>
-            {jobs.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <Briefcase className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                <h3 className="text-lg font-medium mb-2">No Job Postings Yet</h3>
-                <p>Create your first job posting to start finding candidates!</p>
-                <Button 
-                  className="mt-4"
-                  onClick={() => {
-                    resetJobForm();
-                    setShowCreateJob(true);
-                  }}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Your First Job
-                </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {jobs.map((job) => (
-                  <Card key={job.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader className="pb-3">
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {jobs.map((job) => (
+                <Card key={job.id} className="border hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <CardTitle className="text-lg">{job.title}</CardTitle>
-                          <p className="text-gray-600">{job.company}</p>
+                          <h3 className="font-semibold text-lg line-clamp-1">{job.title}</h3>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            <Badge variant="outline" className="text-xs">
+                              <MapPin className="w-3 h-3 mr-1" />
+                              {job.location}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {job.paymentType}
+                            </Badge>
+                            <Badge variant={job.status === 'active' ? 'default' : job.status === 'completed' ? 'secondary' : 'outline'} className="text-xs">
+                              {job.status}
+                            </Badge>
+                            {job.insuranceAvailable && (
+                              <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
+                                <Shield className="w-3 h-3 mr-1" />
+                                Insured
+                              </Badge>
+                            )}
+                          </div>
                         </div>
-                        <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>
-                          {job.status || 'active'}
-                        </Badge>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-green-600">₹{job.salary}</div>
+                          <div className="text-xs text-gray-600">{job.paymentType}</div>
+                        </div>
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <div className="text-lg font-bold text-green-600">₹{job.payment.toLocaleString()}</div>
-                        <div className="text-sm text-gray-600">{job.paymentType}</div>
+                      
+                      <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
+                      
+                      <div className="flex gap-4 text-xs text-gray-600">
+                        <span><Users className="w-3 h-3 inline mr-1" />{job.applicants || 0} applicants</span>
+                        <span><Star className="w-3 h-3 inline mr-1" />{job.shortlisted || 0} shortlisted</span>
+                        <span><Calendar className="w-3 h-3 inline mr-1" />Need {job.candidatesRequired}</span>
                       </div>
                       
                       <div className="flex flex-wrap gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {job.location}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {job.type}
-                        </Badge>
-                      </div>
-
-                      <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
-
-                      <div className="flex justify-between items-center text-sm text-gray-600">
-                        <span><Users className="w-4 h-4 inline mr-1" />{job.applicants} applied</span>
-                        <span><CheckCircle className="w-4 h-4 inline mr-1" />{job.shortlisted} selected</span>
-                      </div>
-
-                      <div className="flex gap-2 pt-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleJobSelect(job)}
-                          className="flex-1"
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View
+                        <Button size="sm" variant="outline" onClick={() => setSelectedJobForCandidates(job)} className="text-xs px-2 py-1">
+                          <Eye className="w-3 h-3 mr-1" />
+                          View Candidates
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEditJob(job)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDeleteJob(job.id)}
-                          className="text-red-600 border-red-300 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Create/Edit Job Dialog */}
-        <Dialog open={showCreateJob} onOpenChange={setShowCreateJob}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingJob ? 'Edit Job' : 'Create New Job'}</DialogTitle>
-              <DialogDescription>
-                {editingJob ? 'Update your job posting details' : 'Fill in the details to create a new job posting'}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                <TabsTrigger value="details">Job Details</TabsTrigger>
-                {!user?.isNewUser && inactiveJobs.length > 0 && (
-                  <TabsTrigger value="reactivate">Reactivate Job</TabsTrigger>
-                )}
-              </TabsList>
-              
-              <TabsContent value="basic" className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="title">Job Title *</Label>
-                    <Input
-                      id="title"
-                      value={jobForm.title}
-                      onChange={(e) => setJobForm(prev => ({ ...prev, title: e.target.value }))}
-                      placeholder="e.g. Senior Developer"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="company">Company</Label>
-                    <Input
-                      id="company"
-                      value={jobForm.company}
-                      onChange={(e) => setJobForm(prev => ({ ...prev, company: e.target.value }))}
-                      placeholder="Company name"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="location">Location *</Label>
-                    <CheckboxDropdown
-                      options={sampleData.districts}
-                      selectedValues={jobForm.location ? [jobForm.location] : []}
-                      onSelectionChange={(values) => setJobForm(prev => ({ ...prev, location: values[0] || '' }))}
-                      placeholder="Select location"
-                      className="w-full"
-                      maxSelections={1}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="workType">Work Type</Label>
-                    <Select value={jobForm.workType} onValueChange={(value) => setJobForm(prev => ({ ...prev, workType: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select work type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="construction">Construction</SelectItem>
-                        <SelectItem value="plumbing">Plumbing</SelectItem>
-                        <SelectItem value="electrical">Electrical</SelectItem>
-                        <SelectItem value="data_entry">Data Entry</SelectItem>
-                        <SelectItem value="customer_service">Customer Service</SelectItem>
-                        <SelectItem value="delivery">Delivery</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="description">Job Description *</Label>
-                  <Textarea
-                    id="description"
-                    value={jobForm.description}
-                    onChange={(e) => setJobForm(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Describe the job role, responsibilities, and expectations..."
-                    rows={4}
-                  />
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="details" className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="salary">Salary/Payment *</Label>
-                    <Input
-                      id="salary"
-                      type="number"
-                      value={jobForm.salary}
-                      onChange={(e) => setJobForm(prev => ({ ...prev, salary: e.target.value }))}
-                      placeholder="Amount"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="paymentType">Payment Type</Label>
-                    <Select value={jobForm.paymentType} onValueChange={(value) => setJobForm(prev => ({ ...prev, paymentType: value }))}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="hourly">Per Hour</SelectItem>
-                        <SelectItem value="daily">Per Day</SelectItem>
-                        <SelectItem value="weekly">Per Week</SelectItem>
-                        <SelectItem value="monthly">Per Month</SelectItem>
-                        <SelectItem value="fixed">Fixed Project</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="type">Job Type</Label>
-                    <Select value={jobForm.type} onValueChange={(value) => setJobForm(prev => ({ ...prev, type: value }))}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full-time">Full Time</SelectItem>
-                        <SelectItem value="part-time">Part Time</SelectItem>
-                        <SelectItem value="contract">Contract</SelectItem>
-                        <SelectItem value="freelance">Freelance</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Skills Required</Label>
-                  <CheckboxDropdown
-                    options={sampleData.skillCategories}
-                    selectedValues={jobForm.skills}
-                    onSelectionChange={(values) => setJobForm(prev => ({ ...prev, skills: values }))}
-                    placeholder="Select required skills"
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <Label>Requirements</Label>
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <Input
-                        value={requirementInput}
-                        onChange={(e) => setRequirementInput(e.target.value)}
-                        placeholder="Add a requirement"
-                        onKeyPress={(e) => e.key === 'Enter' && addRequirement()}
-                      />
-                      <Button type="button" onClick={addRequirement}>Add</Button>
-                    </div>
-                    <div className="space-y-1">
-                      {jobForm.requirements.map((req, index) => (
-                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                          <span className="text-sm">{req}</span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeRequirement(index)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="tools">Tools/Equipment Provided</Label>
-                  <Textarea
-                    id="tools"
-                    value={jobForm.tools}
-                    onChange={(e) => setJobForm(prev => ({ ...prev, tools: e.target.value }))}
-                    placeholder="List any tools, equipment, or resources provided..."
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="candidatesRequired">Number of Candidates Required</Label>
-                  <Input
-                    id="candidatesRequired"
-                    type="number"
-                    min="1"
-                    value={jobForm.candidatesRequired}
-                    onChange={(e) => setJobForm(prev => ({ ...prev, candidatesRequired: parseInt(e.target.value) || 1 }))}
-                  />
-                </div>
-              </TabsContent>
-
-              {!user?.isNewUser && inactiveJobs.length > 0 && (
-                <TabsContent value="reactivate" className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">Reactivate Previous Jobs</h3>
-                    <div className="grid gap-4">
-                      {inactiveJobs.map((job) => (
-                        <Card key={job.id} className="p-4">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <h4 className="font-semibold">{job.title}</h4>
-                              <p className="text-sm text-gray-600">{job.company} • {job.location}</p>
-                              <p className="text-sm text-gray-500 mt-1">
-                                ₹{job.payment.toLocaleString()} {job.paymentType}
-                              </p>
-                              {job.completedDate && (
-                                <p className="text-xs text-gray-400 mt-1">
-                                  Completed: {new Date(job.completedDate).toLocaleDateString()}
-                                </p>
-                              )}
-                            </div>
-                            <Button
-                              size="sm"
-                              onClick={() => handleReactivateJob(job.id)}
-                            >
-                              <RotateCcw className="w-4 h-4 mr-1" />
-                              Reactivate
+                        {job.status === 'active' && (
+                          <>
+                            <Button size="sm" variant="outline" onClick={() => handleEditJob(job)} className="text-xs px-2 py-1">
+                              <Edit className="w-3 h-3 mr-1" />
+                              Edit
                             </Button>
-                          </div>
-                        </Card>
-                      ))}
+                            <Button size="sm" variant="outline" onClick={() => setSelectedJobForCompletion(job)} className="text-xs px-2 py-1">
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              Complete
+                            </Button>
+                          </>
+                        )}
+                        <Button size="sm" variant="outline" onClick={() => handleDeleteJob(job.id)} className="text-xs px-2 py-1">
+                          <Trash className="w-3 h-3 mr-1" />
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </TabsContent>
-              )}
-            </Tabs>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-            <div className="flex justify-between pt-6">
-              <Button variant="outline" onClick={() => setShowCreateJob(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateJob}>
+      {/* Create/Edit Job Modal */}
+      <Dialog open={showCreateJobModal} onOpenChange={setShowCreateJobModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingJob ? 'Edit Job' : 'Create New Job'}</DialogTitle>
+            <DialogDescription>
+              {editingJob ? 'Update your job posting details' : 'Fill in the details to create a new job posting'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="title">Job Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  placeholder="e.g., Plumber needed for residential work"
+                />
+              </div>
+              <div>
+                <Label htmlFor="workType">Work Type *</Label>
+                <Select value={formData.workType} onValueChange={(value) => handleInputChange('workType', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select work type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="plumbing">Plumbing</SelectItem>
+                    <SelectItem value="carpentry">Carpentry</SelectItem>
+                    <SelectItem value="painting">Painting</SelectItem>
+                    <SelectItem value="electrical">Electrical</SelectItem>
+                    <SelectItem value="construction">Construction</SelectItem>
+                    <SelectItem value="gardening">Gardening</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="location">Location *</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  placeholder="City, State"
+                />
+              </div>
+              <div>
+                <Label htmlFor="salary">Payment Amount *</Label>
+                <Input
+                  id="salary"
+                  value={formData.salary}
+                  onChange={(e) => handleInputChange('salary', e.target.value)}
+                  placeholder="Amount in INR"
+                />
+              </div>
+              <div>
+                <Label htmlFor="paymentType">Payment Type *</Label>
+                <Select value={formData.paymentType} onValueChange={(value) => handleInputChange('paymentType', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select payment type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hourly">Hourly</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="fixed">Fixed Project</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="candidatesRequired">Candidates Required *</Label>
+                <Input
+                  id="candidatesRequired"
+                  type="number"
+                  min="1"
+                  value={formData.candidatesRequired}
+                  onChange={(e) => handleInputChange('candidatesRequired', parseInt(e.target.value) || 1)}
+                  placeholder="Number of candidates needed"
+                />
+              </div>
+              <div>
+                <Label htmlFor="estimatedEndDate">Estimated End Date *</Label>
+                <Input
+                  id="estimatedEndDate"
+                  type="date"
+                  value={formData.estimatedEndDate}
+                  onChange={(e) => handleInputChange('estimatedEndDate', e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="toolsRequired">Tools Required</Label>
+                <Input
+                  id="toolsRequired"
+                  value={formData.toolsRequired}
+                  onChange={(e) => handleInputChange('toolsRequired', e.target.value)}
+                  placeholder="Tools/equipment needed"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="description">Job Description *</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                placeholder="Describe the job requirements and responsibilities"
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="insuranceAvailable"
+                checked={formData.insuranceAvailable}
+                onCheckedChange={(checked) => handleInputChange('insuranceAvailable', checked)}
+              />
+              <Label htmlFor="insuranceAvailable">Insurance Available</Label>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <Button onClick={editingJob ? handleUpdateJob : handleCreateJob}>
                 {editingJob ? 'Update Job' : 'Create Job'}
               </Button>
+              <Button variant="outline" onClick={() => {
+                setShowCreateJobModal(false);
+                setEditingJob(null);
+                resetForm();
+              }}>
+                Cancel
+              </Button>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-        {/* Job Details Dialog */}
-        <Dialog open={showJobDetails} onOpenChange={setShowJobDetails}>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{selectedJob?.title}</DialogTitle>
-              <DialogDescription>{selectedJob?.company} • {selectedJob?.location}</DialogDescription>
-            </DialogHeader>
+      {/* Reactivate Jobs Modal */}
+      <Dialog open={showReactivateModal} onOpenChange={setShowReactivateModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Reactivate Completed Jobs</DialogTitle>
+            <DialogDescription>
+              Select a completed job to reactivate and post again
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {completedJobsForReactivation.map((job) => (
+              <div key={job.id} className="p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-medium">{job.title}</h4>
+                  <Badge variant="secondary">Completed</Badge>
+                </div>
+                <p className="text-sm text-gray-600 mb-2">{job.description}</p>
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-gray-500">
+                    <span>{job.location}</span> • <span>₹{job.salary} ({job.paymentType})</span>
+                  </div>
+                  <Button size="sm" onClick={() => handleReactivateJob(job)}>
+                    Reactivate
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Stats Modal */}
+      <Dialog open={!!showStatsModal} onOpenChange={() => setShowStatsModal(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {showStatsModal === 'total' && 'All Jobs'}
+              {showStatsModal === 'active' && 'Active Jobs'}
+              {showStatsModal === 'completed' && 'Completed Jobs'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {getStatsModalData(showStatsModal || '').map((job) => (
+              <div key={job.id} className="p-3 border rounded-lg">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-medium">{job.title}</h4>
+                  <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>
+                    {job.status}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600 mb-2">{job.location}</p>
+                <div className="flex justify-between text-sm">
+                  <span>₹{job.salary} ({job.paymentType})</span>
+                  <span>{job.applicants || 0} applicants</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Candidates Modal */}
+      <Dialog open={!!selectedJobForCandidates} onOpenChange={() => setSelectedJobForCandidates(null)}>
+        <DialogContent className="max-w-6xl">
+          <DialogHeader>
+            <DialogTitle>Candidates for "{selectedJobForCandidates?.title}"</DialogTitle>
+            <DialogDescription>
+              Review and manage candidates who applied for this position
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+            {selectedJobForCandidates && getCandidatesForJob(selectedJobForCandidates.id).map((candidate) => (
+              <div key={candidate.id} className={`border rounded-lg p-4 ${getFitColor(candidate.fit)} ${getFitEmphasis(candidate.fit)} transition-all`}>
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-lg">{candidate.name}</h4>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium">{candidate.rating}</span>
+                      </div>
+                      <Badge variant="outline">{candidate.experience}</Badge>
+                      <Badge className={`text-xs font-bold ${
+                        candidate.fit === 'excellent' ? 'bg-green-600 text-white' :
+                        candidate.fit === 'good' ? 'bg-blue-600 text-white' :
+                        'bg-red-600 text-white'
+                      }`}>
+                        {candidate.fit.toUpperCase()} FIT
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 mb-3">
+                  <div className="text-sm">
+                    <MapPin className="w-3 h-3 inline mr-1" />
+                    {candidate.location}
+                  </div>
+                  <div className="text-sm">
+                    <Phone className="w-3 h-3 inline mr-1" />
+                    {candidate.phone}
+                  </div>
+                  <div className="text-sm">
+                    <Mail className="w-3 h-3 inline mr-1" />
+                    {candidate.email}
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex gap-1 flex-wrap">
+                    {candidate.skills.map((skill, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <Button 
+                    size="sm" 
+                    variant={candidate.status === 'offer_sent' ? 'secondary' : 'default'}
+                    disabled={candidate.status === 'offer_sent'}
+                    onClick={() => {
+                      const nextStatus = candidate.status === 'applied' ? 'selected' : 
+                                       candidate.status === 'selected' ? 'offer_sent' : candidate.status;
+                      handleCandidateAction(selectedJobForCandidates.id, candidate.id, nextStatus);
+                    }}
+                    className="w-full"
+                  >
+                    <CheckCircle className="w-4 h-4 mr-1" />
+                    {getButtonText(candidate.status, 'select')}
+                  </Button>
+                  <div className="flex gap-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleViewCandidateProfile(candidate)}
+                      className="flex-1 text-xs"
+                    >
+                      <Eye className="w-3 h-3 mr-1" />
+                      Profile
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      disabled={candidate.status === 'documents_requested'}
+                      onClick={() => handleCandidateAction(selectedJobForCandidates.id, candidate.id, 'documents_requested')}
+                      className="flex-1 text-xs"
+                    >
+                      <FileText className="w-3 h-3 mr-1" />
+                      {getButtonText(candidate.status, 'document')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Job Completion Modal */}
+      <Dialog open={!!selectedJobForCompletion} onOpenChange={() => setSelectedJobForCompletion(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Complete Job</DialogTitle>
+            <DialogDescription>
+              Mark "{selectedJobForCompletion?.title}" as completed and initiate payment
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="w-5 h-5 text-blue-600" />
+                <span className="font-medium">Payment Details</span>
+              </div>
+              <p className="text-sm text-gray-600">
+                Amount: ₹{selectedJobForCompletion?.salary} ({selectedJobForCompletion?.paymentType})
+              </p>
+              <p className="text-sm text-gray-600">
+                This will initiate payment to the selected job seeker(s)
+              </p>
+            </div>
             
-            {selectedJob && (
-              <Tabs defaultValue="overview" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="candidates">Candidates ({getCandidatesForJob(selectedJob.id).length})</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="overview" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="font-semibold mb-2">Job Details</h3>
-                      <div className="space-y-2 text-sm">
-                        <p><strong>Payment:</strong> ₹{selectedJob.payment.toLocaleString()} {selectedJob.paymentType}</p>
-                        <p><strong>Type:</strong> {selectedJob.type}</p>
-                        <p><strong>Location:</strong> {selectedJob.location}</p>
-                        <p><strong>Candidates Required:</strong> {selectedJob.candidatesRequired || 1}</p>
-                      </div>
+            <div className="flex gap-2">
+              <Button onClick={() => selectedJobForCompletion && handleCompleteJob(selectedJobForCompletion)}>
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Complete & Pay
+              </Button>
+              <Button variant="outline" onClick={() => setSelectedJobForCompletion(null)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rating Modal */}
+      <Dialog open={showRatingModal} onOpenChange={setShowRatingModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rate Candidate Performance</DialogTitle>
+            <DialogDescription>
+              Please rate the candidate's performance for "{completedJobToRate?.title}"
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="flex justify-center gap-1 mb-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setCandidateRating(star)}
+                    className="text-2xl focus:outline-none"
+                  >
+                    <Star className={`w-8 h-8 ${star <= candidateRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-gray-600">Rating: {candidateRating} out of 5 stars</p>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button onClick={handleRateCandidate}>
+                <Award className="w-4 h-4 mr-2" />
+                Submit Rating
+              </Button>
+              <Button variant="outline" onClick={() => setShowRatingModal(false)}>
+                Skip
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Candidate Profile Modal */}
+      <Dialog open={!!selectedCandidateProfile} onOpenChange={() => setSelectedCandidateProfile(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Candidate Profile</DialogTitle>
+            <DialogDescription>
+              Detailed profile information for {selectedCandidateProfile?.name}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedCandidateProfile && (
+            <div className="space-y-6">
+              {/* Profile Header */}
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                  <span className="text-xl font-bold text-gray-600">
+                    {selectedCandidateProfile.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold">{selectedCandidateProfile.name}</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-medium">{selectedCandidateProfile.rating}</span>
                     </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Application Stats</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="text-center p-3 bg-blue-50 rounded">
-                          <div className="text-2xl font-bold text-blue-600">{selectedJob.applicants}</div>
-                          <div className="text-sm text-gray-600">Applied</div>
-                        </div>
-                        <div className="text-center p-3 bg-green-50 rounded">
-                          <div className="text-2xl font-bold text-green-600">{selectedJob.shortlisted}</div>
-                          <div className="text-sm text-gray-600">Selected</div>
-                        </div>
-                      </div>
+                    <Badge variant="outline">{selectedCandidateProfile.experience}</Badge>
+                    <Badge className={getFitColor(selectedCandidateProfile.fit)}>{selectedCandidateProfile.fit} fit</Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Contact Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="w-4 h-4 text-gray-500" />
+                      <span>{selectedCandidateProfile.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Mail className="w-4 h-4 text-gray-500" />
+                      <span>{selectedCandidateProfile.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-4 h-4 text-gray-500" />
+                      <span>{selectedCandidateProfile.location}</span>
                     </div>
                   </div>
-                  
-                  <div>
-                    <h3 className="font-semibold mb-2">Description</h3>
-                    <p className="text-gray-600">{selectedJob.description}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Application Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <div>Applied: {selectedCandidateProfile.applied}</div>
+                    <div>Experience: {selectedCandidateProfile.experience}</div>
+                    <div>Rating: {selectedCandidateProfile.rating}/5.0</div>
                   </div>
-                  
-                  <div>
-                    <h3 className="font-semibold mb-2">Required Skills</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedJob.skills.map((skill, index) => (
-                        <Badge key={index} variant="secondary">{skill}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {selectedJob.requirements.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold mb-2">Requirements</h3>
-                      <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                        {selectedJob.requirements.map((req, index) => (
-                          <li key={index}>{req}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="candidates" className="space-y-4">
-                  {user?.isNewUser ? (
-                    <div className="text-center py-12 text-gray-500">
-                      <Users className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <h3 className="text-lg font-medium mb-2">No Applications Yet</h3>
-                      <p>Once candidates start applying, you'll see them here!</p>
-                    </div>
-                  ) : (
-                    (() => {
-                      const { highFit, mediumFit, lowFit } = getCandidatesByFit(selectedJob.id);
-                      
-                      if (highFit.length === 0 && mediumFit.length === 0 && lowFit.length === 0) {
-                        return (
-                          <div className="text-center py-12 text-gray-500">
-                            <Users className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                            <h3 className="text-lg font-medium mb-2">No Applications Yet</h3>
-                            <p>Once candidates start applying, you'll see them here!</p>
-                          </div>
-                        );
-                      }
-                      
-                      return (
-                        <div className="space-y-6">
-                          {highFit.length > 0 && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-4 text-green-700">
-                                High Fit Candidates ({highFit.length})
-                              </h3>
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {highFit.map(candidate => renderCandidateCard(candidate, selectedJob.id))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {mediumFit.length > 0 && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-4 text-yellow-700">
-                                Medium Fit Candidates ({mediumFit.length})
-                              </h3>
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {mediumFit.map(candidate => renderCandidateCard(candidate, selectedJob.id))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {lowFit.length > 0 && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-4 text-red-700">
-                                Low Fit Candidates ({lowFit.length})
-                              </h3>
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {lowFit.map(candidate => renderCandidateCard(candidate, selectedJob.id))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()
-                  )}
-                </TabsContent>
-              </Tabs>
-            )}
-          </DialogContent>
-        </Dialog>
-      </div>
+                </div>
+              </div>
+
+              {/* Skills */}
+              <div>
+                <h4 className="font-semibold mb-2">Skills & Expertise</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedCandidateProfile.skills.map((skill, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-4 border-t">
+                <Button>
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Select Candidate
+                </Button>
+                <Button variant="outline" onClick={() => {
+                  toast({
+                    title: "Document Request Sent",
+                    description: "The candidate has been notified to submit verification documents.",
+                  });
+                }}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Request Documents
+                </Button>
+                <Button variant="outline">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Contact
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
