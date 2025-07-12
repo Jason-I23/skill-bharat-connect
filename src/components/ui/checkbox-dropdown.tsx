@@ -12,7 +12,6 @@ interface CheckboxDropdownProps {
   onSelectionChange: (values: string[]) => void;
   placeholder: string;
   className?: string;
-  maxSelections?: number; // Add support for limiting selections
 }
 
 export const CheckboxDropdown: React.FC<CheckboxDropdownProps> = ({
@@ -20,28 +19,20 @@ export const CheckboxDropdown: React.FC<CheckboxDropdownProps> = ({
   selectedValues,
   onSelectionChange,
   placeholder,
-  className,
-  maxSelections
+  className
 }) => {
   const [open, setOpen] = useState(false);
 
   const handleCheckboxChange = (value: string, checked: boolean) => {
     if (checked) {
-      // If maxSelections is 1, replace the selection instead of adding
-      if (maxSelections === 1) {
-        onSelectionChange([value]);
-      } else {
-        onSelectionChange([...selectedValues, value]);
-      }
+      onSelectionChange([...selectedValues, value]);
     } else {
       onSelectionChange(selectedValues.filter(v => v !== value));
     }
   };
 
   const displayText = selectedValues.length > 0 
-    ? maxSelections === 1 
-      ? selectedValues[0] 
-      : `${selectedValues.length} selected`
+    ? `${selectedValues.length} selected`
     : placeholder;
 
   return (

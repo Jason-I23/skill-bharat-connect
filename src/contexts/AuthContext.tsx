@@ -8,7 +8,6 @@ interface User {
   phone: string;
   userType: 'jobSeeker' | 'jobProvider';
   profileData?: any;
-  isNewUser?: boolean;
 }
 
 interface AuthContextType {
