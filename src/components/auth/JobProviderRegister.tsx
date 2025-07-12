@@ -1,252 +1,160 @@
-
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner';
-import sampleData from '../../data/sampleData.json';
 
 const JobProviderRegister: React.FC = () => {
-  const navigate = useNavigate();
   const { login } = useAuth();
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
-    companyName: '',
-    contactPerson: '',
+    name: '',
     email: '',
     phone: '',
+    company: '',
     password: '',
-    retypePassword: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-    industry: '',
-    companySize: '',
-    gstNumber: '',
-    website: '',
-    agreeTerms: false
+    confirmPassword: '',
+    agreeToTerms: false
   });
 
-  const states = sampleData.states;
-
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = () => {
-    if (formData.password !== formData.retypePassword) {
-      toast.error('Passwords do not match');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.agreeToTerms) {
+      toast.error('Please agree to the terms and conditions');
       return;
     }
     
-    if (!formData.agreeTerms) {
-      toast.error('Please agree to terms and conditions');
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
 
-    const userData = {
-      id: 'provider_' + Date.now(),
-      name: formData.companyName,
+    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    // Create new user with isNewUser flag
+    const newUser = {
+      id: `jobprovider_${Date.now()}`,
+      name: formData.name,
       email: formData.email,
       phone: formData.phone,
       userType: 'jobProvider' as const,
-      profileData: formData
+      profileData: {
+        company: formData.company
+      },
+      isNewUser: true
     };
 
-    login(userData);
-    toast.success('Registration successful! Your details have been shared with NCS.');
-    navigate('/dashboard/jobProvider');
+    login(newUser);
+    toast.success('Account created successfully! Start by creating your first job posting.');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center">
-          <CardTitle>{t('jobProviderRegistration')}</CardTitle>
-          <CardDescription>Register your company to hire skilled professionals</CardDescription>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">{t('job_provider')} Registration</CardTitle>
+          <CardDescription className="text-center">
+            Create your account to start posting jobs
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="companyName">Company Name *</Label>
+              <Label htmlFor="name">Full Name *</Label>
               <Input
-                id="companyName"
-                value={formData.companyName}
-                onChange={(e) => handleInputChange('companyName', e.target.value)}
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Enter your full name"
                 required
               />
             </div>
+            
             <div>
-              <Label htmlFor="contactPerson">Contact Person *</Label>
-              <Input
-                id="contactPerson"
-                value={formData.contactPerson}
-                onChange={(e) => handleInputChange('contactPerson', e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="email">Email ID *</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="Enter your email"
                 required
               />
             </div>
+            
             <div>
-              <Label htmlFor="phone">Mobile Number *</Label>
+              <Label htmlFor="phone">Phone Number *</Label>
               <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
+                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                placeholder="Enter your phone number"
                 required
               />
             </div>
+            
+            <div>
+              <Label htmlFor="company">Company Name</Label>
+              <Input
+                id="company"
+                type="text"
+                value={formData.company}
+                onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+                placeholder="Enter your company name"
+              />
+            </div>
+            
             <div>
               <Label htmlFor="password">Password *</Label>
               <Input
                 id="password"
                 type="password"
                 value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
+                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                placeholder="Create a password"
                 required
               />
             </div>
+            
             <div>
-              <Label htmlFor="retypePassword">Retype Password *</Label>
+              <Label htmlFor="confirmPassword">Confirm Password *</Label>
               <Input
-                id="retypePassword"
+                id="confirmPassword"
                 type="password"
-                value={formData.retypePassword}
-                onChange={(e) => handleInputChange('retypePassword', e.target.value)}
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                placeholder="Confirm your password"
                 required
               />
             </div>
-            <div className="md:col-span-2">
-              <Label htmlFor="address">Company Address *</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleInputChange('address', e.target.value)}
-                required
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="terms"
+                checked={formData.agreeToTerms}
+                onCheckedChange={(checked) => 
+                  setFormData(prev => ({ ...prev, agreeToTerms: checked as boolean }))
+                }
               />
+              <Label htmlFor="terms" className="text-sm">
+                I agree to the Terms and Conditions
+              </Label>
             </div>
-            <div>
-              <Label htmlFor="city">City *</Label>
-              <Input
-                id="city"
-                value={formData.city}
-                onChange={(e) => handleInputChange('city', e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="state">State *</Label>
-              <Select value={formData.state} onValueChange={(value) => handleInputChange('state', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select State" />
-                </SelectTrigger>
-                <SelectContent>
-                  {states.map((state) => (
-                    <SelectItem key={state} value={state}>{state}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="pincode">Pincode *</Label>
-              <Input
-                id="pincode"
-                value={formData.pincode}
-                onChange={(e) => handleInputChange('pincode', e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="industry">Industry *</Label>
-              <Select value={formData.industry} onValueChange={(value) => handleInputChange('industry', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Industry" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="construction">Construction</SelectItem>
-                  <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                  <SelectItem value="services">Services</SelectItem>
-                  <SelectItem value="healthcare">Healthcare</SelectItem>
-                  <SelectItem value="education">Education</SelectItem>
-                  <SelectItem value="retail">Retail</SelectItem>
-                  <SelectItem value="agriculture">Agriculture</SelectItem>
-                  <SelectItem value="technology">Technology</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="companySize">Company Size *</Label>
-              <Select value={formData.companySize} onValueChange={(value) => handleInputChange('companySize', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Company Size" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1-10">1-10 employees</SelectItem>
-                  <SelectItem value="11-50">11-50 employees</SelectItem>
-                  <SelectItem value="51-200">51-200 employees</SelectItem>
-                  <SelectItem value="201-500">201-500 employees</SelectItem>
-                  <SelectItem value="500+">500+ employees</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="gstNumber">GST Number</Label>
-              <Input
-                id="gstNumber"
-                value={formData.gstNumber}
-                onChange={(e) => handleInputChange('gstNumber', e.target.value)}
-                placeholder="Optional"
-              />
-            </div>
-            <div>
-              <Label htmlFor="website">Website</Label>
-              <Input
-                id="website"
-                value={formData.website}
-                onChange={(e) => handleInputChange('website', e.target.value)}
-                placeholder="Optional"
-              />
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="terms" 
-              checked={formData.agreeTerms}
-              onCheckedChange={(checked) => handleInputChange('agreeTerms', checked as boolean)}
-            />
-            <Label htmlFor="terms" className="text-sm">I agree to the Terms and Conditions *</Label>
-          </div>
-
-          <Button onClick={handleSubmit} className="w-full">
-            Register Company
-          </Button>
-
-          <div className="text-center">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/auth-choice?action=register')}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              ← Back
+            
+            <Button type="submit" className="w-full">
+              Create Account
             </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
     </div>

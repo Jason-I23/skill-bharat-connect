@@ -1,0 +1,103 @@
+
+{
+  "newJobSeeker": {
+    "stats": {
+      "applied": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "earnings": 0
+    },
+    "jobApplicationProgress": [],
+    "availableJobs": [
+      {
+        "id": "new_job_1",
+        "title": "Data Entry Assistant",
+        "company": "TechStart Solutions",
+        "location": "Chennai, Tamil Nadu",
+        "workType": "data_entry",
+        "description": "Entry-level data entry position. Perfect for beginners looking to start their career.",
+        "requirements": ["Basic computer skills", "Attention to detail"],
+        "salary": "15000",
+        "paymentType": "monthly",
+        "payment": 15000,
+        "type": "full-time",
+        "rating": 4.3,
+        "applicants": 12,
+        "shortlisted": 5,
+        "recruited": 2,
+        "skills": ["Data Entry", "MS Office", "Typing"],
+        "tools": "Computer and internet provided",
+        "tags": ["entry_level", "training_provided"],
+        "providerId": "provider_new_1",
+        "skillMatch": 85
+      },
+      {
+        "id": "new_job_2",
+        "title": "Customer Support Representative",
+        "company": "HelpDesk Pro",
+        "location": "Bangalore, Karnataka",
+        "workType": "customer_service",
+        "description": "Handle customer queries via phone and chat. Training provided for freshers.",
+        "requirements": ["Good communication", "Problem solving"],
+        "salary": "18000",
+        "paymentType": "monthly",
+        "payment": 18000,
+        "type": "full-time",
+        "rating": 4.1,
+        "applicants": 8,
+        "shortlisted": 3,
+        "recruited": 1,
+        "skills": ["Communication", "Customer Service", "Problem Solving"],
+        "tools": "Headset and computer provided",
+        "tags": ["entry_level", "good_for_freshers"],
+        "providerId": "provider_new_2",
+        "skillMatch": 78
+      },
+      {
+        "id": "new_job_3",
+        "title": "Delivery Associate",
+        "company": "QuickDelivery Services",
+        "location": "Mumbai, Maharashtra",
+        "workType": "delivery",
+        "description": "Part-time delivery job with flexible hours. Own vehicle required.",
+        "requirements": ["Valid driving license", "Own vehicle"],
+        "salary": "400",
+        "paymentType": "daily",
+        "payment": 400,
+        "type": "part-time",
+        "rating": 4.0,
+        "applicants": 15,
+        "shortlisted": 8,
+        "recruited": 5,
+        "skills": ["Driving", "Navigation", "Time Management"],
+        "tools": "GPS app provided",
+        "tags": ["flexible_hours", "part_time"],
+        "providerId": "provider_new_3",
+        "skillMatch": 92
+      }
+    ]
+  },
+  "newJobProvider": {
+    "stats": {
+      "totalJobs": 0,
+      "activeJobs": 0,
+      "completedJobs": 0,
+      "totalApplications": 0
+    },
+    "jobs": [],
+    "candidates": [],
+    "profile": {
+      "name": "",
+      "company": "",
+      "email": "",
+      "phone": "",
+      "location": "",
+      "verified": false,
+      "rating": 0,
+      "jobsPosted": 0,
+      "jobsCompleted": 0,
+      "paymentRating": 0,
+      "creditworthiness": 0
+    }
+  }
+}

@@ -1,155 +1,86 @@
-
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from '../ui/button';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { toast } from 'sonner';
 
 const JobProviderLogin: React.FC = () => {
-  const navigate = useNavigate();
   const { login } = useAuth();
-  const [step, setStep] = useState<'ncs-check' | 'phone-entry' | 'otp-verification'>('ncs-check');
-  const [hasNCSAccount, setHasNCSAccount] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [otp, setOtp] = useState('');
+  const { t } = useLanguage();
+  const [credentials, setCredentials] = useState({
+    email: '',
+    password: ''
+  });
 
-  const handleNCSChoice = () => {
-    if (!hasNCSAccount) {
-      toast.error('Please select an option');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!credentials.email || !credentials.password) {
+      toast.error('Please fill in all fields');
       return;
     }
-    
-    if (hasNCSAccount === 'no') {
-      navigate('/register/jobProvider');
-      return;
-    }
-    
-    setStep('phone-entry');
-  };
 
-  const handlePhoneSubmit = () => {
-    if (!phoneNumber || phoneNumber.length !== 10) {
-      toast.error('Please enter a valid 10-digit phone number');
-      return;
-    }
-    
-    toast.success('OTP sent to your phone number');
-    setStep('otp-verification');
-  };
-
-  const handleOTPVerification = () => {
-    if (otp !== '123456') {
-      toast.error('Invalid OTP. Use 123456 for demo');
-      return;
-    }
-    
+    // Simulate login for existing user (without isNewUser flag)
     const userData = {
-      id: 'provider1',
-      name: 'ABC Company',
-      email: 'provider@company.com',
-      phone: phoneNumber,
+      id: 'jobprovider_123',
+      name: 'Jane Smith',
+      email: credentials.email,
+      phone: '+91 9876543210',
       userType: 'jobProvider' as const,
       profileData: {
-        companyName: 'ABC Company',
-        industry: 'Technology',
-        location: 'Mumbai'
-      }
+        company: 'TechCorp Solutions',
+        verified: true,
+        rating: 4.5
+      },
+      // Note: No isNewUser flag for existing users
     };
-    
+
     login(userData);
-    toast.success('Login successful!');
-    navigate('/dashboard/jobProvider');
+    toast.success('Login successful! Welcome back.');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>Job Provider Login</CardTitle>
-          <CardDescription>
-            {step === 'ncs-check' && 'Let us know about your NCS registration'}
-            {step === 'phone-entry' && 'Enter your registered phone number'}
-            {step === 'otp-verification' && 'Enter the OTP sent to your phone'}
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">{t('job_provider')} Login</CardTitle>
+          <CardDescription className="text-center">
+            Sign in to your account to manage your job postings
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {step === 'ncs-check' && (
-            <>
-              <div className="space-y-3">
-                <Label className="text-base font-medium">
-                  Are you registered with National Career Service (NCS) portal?
-                </Label>
-                <RadioGroup value={hasNCSAccount} onValueChange={setHasNCSAccount}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="yes" />
-                    <Label htmlFor="yes">Yes, I am registered</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="no" />
-                    <Label htmlFor="no">No, I need to register</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              <Button onClick={handleNCSChoice} className="w-full">
-                Continue
-              </Button>
-            </>
-          )}
-
-          {step === 'phone-entry' && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Enter 10-digit phone number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  maxLength={10}
-                />
-              </div>
-              <Button onClick={handlePhoneSubmit} className="w-full">
-                Send OTP
-              </Button>
-            </>
-          )}
-
-          {step === 'otp-verification' && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="otp">Enter OTP</Label>
-                <Input
-                  id="otp"
-                  type="text"
-                  placeholder="Enter 6-digit OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  maxLength={6}
-                />
-                <p className="text-xs text-gray-500">
-                  Demo OTP: 123456
-                </p>
-              </div>
-              <Button onClick={handleOTPVerification} className="w-full">
-                Verify & Login
-              </Button>
-            </>
-          )}
-
-          <div className="text-center">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/auth-choice?action=login')}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              ← Back
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={credentials.email}
+                onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={credentials.password}
+                onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+            
+            <Button type="submit" className="w-full">
+              Sign In
             </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
     </div>
