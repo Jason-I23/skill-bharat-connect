@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -51,7 +50,8 @@ const JobProviderDashboard: React.FC = () => {
   // Use new user data if user is new, otherwise use existing data
   const userData = user?.isNewUser ? newUserData.newJobProvider : sampleData;
   const initialJobs = user?.isNewUser ? [] : sampleData.jobs;
-  const initialCandidates = user?.isNewUser ? [] : sampleData.candidates;
+  // Fix: Access candidates from the correct source
+  const initialCandidates = user?.isNewUser ? [] : sampleData.candidates || [];
   
   // State management
   const [jobs, setJobs] = useState<Job[]>(initialJobs);
@@ -194,6 +194,7 @@ const JobProviderDashboard: React.FC = () => {
       });
       setEditingJob({ ...jobToReactivate, status: 'active' });
       setShowReactivateJobs(false);
+      setShowCreateJob(true);
     }
   };
 
@@ -576,7 +577,7 @@ const JobProviderDashboard: React.FC = () => {
                       onSelectionChange={(values) => setJobForm(prev => ({ ...prev, location: values[0] || '' }))}
                       placeholder="Select location"
                       className="w-full"
-                      singleSelect
+                      maxSelections={1}
                     />
                   </div>
                   <div>
