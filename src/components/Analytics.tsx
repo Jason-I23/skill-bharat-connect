@@ -1,345 +1,375 @@
 
-import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line
-} from 'recharts';
-import { TrendingUp, Users, IndianRupee, Calendar, Award } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Input } from './ui/input';
+import { Badge } from './ui/badge';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { TrendingUp, Users, Briefcase, MapPin, Search, DollarSign, Activity, Target } from 'lucide-react';
+
+// Mock data for analytics
+const mockAnalyticsData = {
+  today: {
+    totalJobs: 1247,
+    totalJobSeekers: 8945,
+    completedJobs: 156,
+    totalSearches: 2341,
+    totalEarnings: 2450000,
+    conversionRate: 12.5,
+    realTimeStats: {
+      activeUsers: 234,
+      newJobPosts: 45,
+      newRegistrations: 78
+    }
+  },
+  overall: {
+    totalJobs: 15678,
+    totalJobSeekers: 125000,
+    completedJobs: 8945,
+    totalSearches: 456789,
+    totalEarnings: 125000000,
+    conversionRate: 57.1,
+    realTimeStats: {
+      activeUsers: 1234,
+      newJobPosts: 567,
+      newRegistrations: 890
+    }
+  }
+};
+
+const cityData = [
+  { city: 'Mumbai', jobSeekers: 25000, jobProviders: 1200, completedJobs: 1800 },
+  { city: 'Delhi', jobSeekers: 22000, jobProviders: 1100, completedJobs: 1650 },
+  { city: 'Bangalore', jobSeekers: 20000, jobProviders: 950, completedJobs: 1500 },
+  { city: 'Chennai', jobSeekers: 18000, jobProviders: 850, completedJobs: 1200 },
+  { city: 'Kolkata', jobSeekers: 15000, jobProviders: 700, completedJobs: 950 },
+  { city: 'Hyderabad', jobSeekers: 12000, jobProviders: 600, completedJobs: 800 },
+  { city: 'Pune', jobSeekers: 10000, jobProviders: 500, completedJobs: 650 },
+  { city: 'Ahmedabad', jobSeekers: 8000, jobProviders: 400, completedJobs: 500 }
+];
+
+const trendData = [
+  { month: 'Jan', jobs: 1200, jobSeekers: 8500, earnings: 1200000 },
+  { month: 'Feb', jobs: 1350, jobSeekers: 9200, earnings: 1450000 },
+  { month: 'Mar', jobs: 1180, jobSeekers: 8900, earnings: 1350000 },
+  { month: 'Apr', jobs: 1420, jobSeekers: 9800, earnings: 1680000 },
+  { month: 'May', jobs: 1560, jobSeekers: 10500, earnings: 1850000 },
+  { month: 'Jun', jobs: 1340, jobSeekers: 9600, earnings: 1520000 }
+];
+
+const distributionData = [
+  { name: 'Completed Jobs', value: 35, color: '#10b981' },
+  { name: 'Ongoing Jobs', value: 45, color: '#3b82f6' },
+  { name: 'Job Searches', value: 20, color: '#f59e0b' }
+];
+
+const chartConfig = {
+  jobs: { label: 'Jobs', color: '#3b82f6' },
+  jobSeekers: { label: 'Job Seekers', color: '#10b981' },
+  earnings: { label: 'Earnings', color: '#f59e0b' }
+};
 
 const Analytics: React.FC = () => {
-  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('today');
+  const [selectedCity, setSelectedCity] = useState('all');
+  const [searchCity, setSearchCity] = useState('');
+  const [realTimeCounter, setRealTimeCounter] = useState(0);
 
-  // Sample data for job seeker analytics
-  const monthlyEarnings = [
-    { month: 'Jan', earnings: 8000, jobs: 2 },
-    { month: 'Feb', earnings: 12000, jobs: 3 },
-    { month: 'Mar', earnings: 15000, jobs: 4 },
-    { month: 'Apr', earnings: 18000, jobs: 5 },
-    { month: 'May', earnings: 22000, jobs: 6 },
-    { month: 'Jun', earnings: 25000, jobs: 7 }
-  ];
+  // Real-time counter effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRealTimeCounter(prev => prev + Math.floor(Math.random() * 3));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const jobsByCategory = [
-    { name: 'Plumbing', value: 45, color: '#3B82F6' },
-    { name: 'Electrical', value: 30, color: '#10B981' },
-    { name: 'Carpentry', value: 15, color: '#F59E0B' },
-    { name: 'Others', value: 10, color: '#EF4444' }
-  ];
+  const currentData = mockAnalyticsData[activeTab as keyof typeof mockAnalyticsData];
+  
+  const filteredCityData = cityData.filter(city => 
+    city.city.toLowerCase().includes(searchCity.toLowerCase())
+  );
 
-  const skillsPerformance = [
-    { skill: 'Plumbing', earnings: 20250, percentage: 45 },
-    { skill: 'Electrical', earnings: 13500, percentage: 30 },
-    { skill: 'Carpentry', earnings: 6750, percentage: 15 },
-    { skill: 'Others', earnings: 4500, percentage: 10 }
-  ];
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
 
-  // Sample data for job provider analytics
-  const jobPostingStats = [
-    { month: 'Jan', posted: 5, filled: 4, applications: 45 },
-    { month: 'Feb', posted: 7, filled: 6, applications: 78 },
-    { month: 'Mar', posted: 8, filled: 7, applications: 92 },
-    { month: 'Apr', posted: 6, filled: 5, applications: 65 },
-    { month: 'May', posted: 9, filled: 8, applications: 108 },
-    { month: 'Jun', posted: 10, filled: 9, applications: 125 }
-  ];
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+          <p className="text-gray-600">Real-time insights into job market performance</p>
+        </div>
 
-  const candidateQuality = [
-    { category: 'Excellent', count: 15, percentage: 35 },
-    { category: 'Good', count: 20, percentage: 47 },
-    { category: 'Average', count: 8, percentage: 18 }
-  ];
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="today">Today</TabsTrigger>
+            <TabsTrigger value="overall">Overall</TabsTrigger>
+          </TabsList>
 
-  if (user?.userType === 'jobSeeker') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="container mx-auto px-4 py-6 space-y-6">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg">
-            <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-            <p className="text-blue-100">Complete overview of your job performance and growth</p>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <IndianRupee className="w-8 h-8 mx-auto mb-2 text-green-600" />
-                <div className="text-2xl font-bold">₹45,000</div>
-                <div className="text-sm text-gray-600">Total Earnings</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Calendar className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-                <div className="text-2xl font-bold">27</div>
-                <div className="text-sm text-gray-600">Jobs Completed</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-orange-600" />
-                <div className="text-2xl font-bold">4.7</div>
-                <div className="text-sm text-gray-600">Avg Rating</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Award className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                <div className="text-2xl font-bold">85%</div>
-                <div className="text-sm text-gray-600">Success Rate</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Earnings and Jobs Analysis */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Monthly Earnings Trend</CardTitle>
-                <CardDescription>Your earnings growth over time</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={monthlyEarnings}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => [`₹${value}`, 'Earnings']} />
-                    <Line type="monotone" dataKey="earnings" stroke="#3B82F6" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Jobs vs Earnings</CardTitle>
-                <CardDescription>Correlation between jobs completed and earnings</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={monthlyEarnings}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="jobs" fill="#10B981" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Job Categories and Skills Performance */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Jobs by Category</CardTitle>
-                <CardDescription>Distribution of your completed jobs by skill category</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={jobsByCategory}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      dataKey="value"
-                      label={({ name, value }) => `${name}: ${value}%`}
-                    >
-                      {jobsByCategory.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Skills Performance</CardTitle>
-                <CardDescription>Earnings breakdown by skill category</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {skillsPerformance.map((skill) => (
-                    <div key={skill.skill} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{skill.skill}</span>
-                        <div className="text-right">
-                          <div className="font-bold text-green-600">₹{skill.earnings.toLocaleString()}</div>
-                          <div className="text-sm text-gray-500">{skill.percentage}% of total</div>
-                        </div>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
-                          style={{ width: `${skill.percentage}%` }}
-                        ></div>
-                      </div>
+          <TabsContent value={activeTab} className="space-y-6">
+            {/* Real-time Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-blue-100 text-sm">Total Jobs</p>
+                      <p className="text-2xl font-bold">{currentData.totalJobs.toLocaleString()}</p>
+                      <Badge variant="secondary" className="mt-1 bg-blue-400/20 text-blue-100">
+                        Live: +{realTimeCounter}
+                      </Badge>
                     </div>
+                    <Briefcase className="h-8 w-8 text-blue-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-green-100 text-sm">Job Seekers</p>
+                      <p className="text-2xl font-bold">{currentData.totalJobSeekers.toLocaleString()}</p>
+                      <Badge variant="secondary" className="mt-1 bg-green-400/20 text-green-100">
+                        Active: {currentData.realTimeStats.activeUsers}
+                      </Badge>
+                    </div>
+                    <Users className="h-8 w-8 text-green-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-orange-100 text-sm">Total Earnings</p>
+                      <p className="text-2xl font-bold">{formatCurrency(currentData.totalEarnings)}</p>
+                      <Badge variant="secondary" className="mt-1 bg-orange-400/20 text-orange-100">
+                        Growth: +15%
+                      </Badge>
+                    </div>
+                    <DollarSign className="h-8 w-8 text-orange-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-purple-100 text-sm">Conversion Rate</p>
+                      <p className="text-2xl font-bold">{currentData.conversionRate}%</p>
+                      <Badge variant="secondary" className="mt-1 bg-purple-400/20 text-purple-100">
+                        Trending Up
+                      </Badge>
+                    </div>
+                    <Target className="h-8 w-8 text-purple-200" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Additional Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <Activity className="h-5 w-5 mr-2 text-green-600" />
+                    Completed Jobs
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-green-600">{currentData.completedJobs.toLocaleString()}</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <Search className="h-5 w-5 mr-2 text-blue-600" />
+                    Total Searches
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-blue-600">{currentData.totalSearches.toLocaleString()}</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <TrendingUp className="h-5 w-5 mr-2 text-purple-600" />
+                    New Registrations
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-purple-600">{currentData.realTimeStats.newRegistrations}</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Distribution Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Job Distribution Overview</CardTitle>
+                <CardDescription>Distribution of job activities across categories</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={distributionData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {distributionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* City-wise Data */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <MapPin className="h-5 w-5 mr-2" />
+                  City-wise Statistics
+                </CardTitle>
+                <CardDescription>Job seekers and providers across major Indian cities</CardDescription>
+                <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                  <Input
+                    placeholder="Search cities..."
+                    value={searchCity}
+                    onChange={(e) => setSearchCity(e.target.value)}
+                    className="max-w-xs"
+                  />
+                  <Select value={selectedCity} onValueChange={setSelectedCity}>
+                    <SelectTrigger className="max-w-xs">
+                      <SelectValue placeholder="Filter by city" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Cities</SelectItem>
+                      {cityData.map((city) => (
+                        <SelectItem key={city.city} value={city.city.toLowerCase()}>
+                          {city.city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {filteredCityData.map((city) => (
+                    <Card key={city.city} className="border-l-4 border-l-blue-500">
+                      <CardContent className="p-4">
+                        <h3 className="font-semibold text-lg mb-2">{city.city}</h3>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Job Seekers:</span>
+                            <span className="font-medium">{city.jobSeekers.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Job Providers:</span>
+                            <span className="font-medium">{city.jobProviders.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Completed Jobs:</span>
+                            <span className="font-medium text-green-600">{city.completedJobs.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          {/* Skills Development Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Skill Development & Certifications</CardTitle>
-              <CardDescription>Enhance your skills with these recommended courses</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold mb-2">Advanced Plumbing</h4>
-                  <p className="text-sm text-gray-600 mb-3">Master advanced plumbing techniques and certification</p>
-                  <a
-                    href="https://www.ncs.gov.sg/ncs-web/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  >
-                    Enroll on NCS Portal →
-                  </a>
-                </div>
-                <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold mb-2">Electrical Safety</h4>
-                  <p className="text-sm text-gray-600 mb-3">Safety protocols and electrical work certification</p>
-                  <a
-                    href="https://www.ncs.gov.sg/ncs-web/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  >
-                    Enroll on NCS Portal →
-                  </a>
-                </div>
-                <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold mb-2">Carpentry Mastery</h4>
-                  <p className="text-sm text-gray-600 mb-3">Advanced woodworking and furniture design</p>
-                  <a
-                    href="https://www.ncs.gov.sg/ncs-web/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  >
-                    Enroll on NCS Portal →
-                  </a>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+            {/* Trend Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Job Trends</CardTitle>
+                  <CardDescription>Monthly job posting trends</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig} className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={trendData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Line type="monotone" dataKey="jobs" stroke={chartConfig.jobs.color} strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
 
-  // Job Provider Analytics
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-lg shadow-lg">
-          <h1 className="text-2xl font-bold">Provider Analytics</h1>
-          <p className="text-green-100">Complete overview of your job postings and candidate performance</p>
-        </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Job Seeker Growth</CardTitle>
+                  <CardDescription>Monthly job seeker registration trends</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig} className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={trendData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Line type="monotone" dataKey="jobSeekers" stroke={chartConfig.jobSeekers.color} strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4 text-center">
-              <Calendar className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-              <div className="text-2xl font-bold">45</div>
-              <div className="text-sm text-gray-600">Jobs Posted</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <Users className="w-8 h-8 mx-auto mb-2 text-green-600" />
-              <div className="text-2xl font-bold">39</div>
-              <div className="text-sm text-gray-600">Jobs Filled</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <TrendingUp className="w-8 h-8 mx-auto mb-2 text-orange-600" />
-              <div className="text-2xl font-bold">513</div>
-              <div className="text-sm text-gray-600">Applications</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <Award className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-              <div className="text-2xl font-bold">4.6</div>
-              <div className="text-sm text-gray-600">Avg Rating</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Performance Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Job Posting Performance</CardTitle>
-              <CardDescription>Monthly job posting and fulfillment rates</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={jobPostingStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="posted" fill="#3B82F6" name="Posted" />
-                  <Bar dataKey="filled" fill="#10B981" name="Filled" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Candidate Quality Distribution</CardTitle>
-              <CardDescription>Quality assessment of hired candidates</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {candidateQuality.map((item) => (
-                  <div key={item.category} className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{item.category}</span>
-                      <span className="text-gray-600">{item.count} candidates ({item.percentage}%)</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${
-                          item.category === 'Excellent' ? 'bg-green-500' :
-                          item.category === 'Good' ? 'bg-blue-500' : 'bg-orange-500'
-                        }`}
-                        style={{ width: `${item.percentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            {/* Earnings Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Earnings Overview</CardTitle>
+                <CardDescription>Monthly earnings distribution</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer config={chartConfig} className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={trendData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="earnings" fill={chartConfig.earnings.color} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
