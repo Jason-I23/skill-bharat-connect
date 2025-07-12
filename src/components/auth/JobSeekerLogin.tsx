@@ -1,85 +1,167 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Button } from '../../components/ui/button';
-import { toast } from '../ui/use-toast';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { toast } from 'sonner';
+import sampleData from '../../data/sampleData.json';
 
 const JobSeekerLogin: React.FC = () => {
-  const { login } = useAuth();
-  const { t } = useLanguage();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const { login } = useAuth();
+  const [step, setStep] = useState<'ncs-check' | 'phone-entry' | 'otp-verification'>('ncs-check');
+  const [hasNCSAccount, setHasNCSAccount] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOtp] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleNCSChoice = () => {
+    if (!hasNCSAccount) {
+      toast.error('Please select an option');
+      return;
+    }
+    
+    if (hasNCSAccount === 'no') {
+      navigate('/register/jobSeeker');
+      return;
+    }
+    
+    setStep('phone-entry');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePhoneSubmit = () => {
+    if (!phoneNumber || phoneNumber.length !== 10) {
+      toast.error('Please enter a valid 10-digit phone number');
+      return;
+    }
     
-    // Mock login logic
-    const userData = {
-      id: '1',
-      name: 'John Doe',
-      email: formData.email,
-      userType: 'jobSeeker' as const,
-      isNewUser: false // Existing user
-    };
+    // Check if phone exists in sample data
+    const ncsUser = sampleData.ncsUsers.find(user => user.phone === phoneNumber);
+    if (!ncsUser) {
+      toast.error('Phone number not found in NCS records');
+      return;
+    }
+    
+    // Simulate OTP sending
+    toast.success('OTP sent to your phone number');
+    setStep('otp-verification');
+  };
 
-    login(userData);
-    toast.success('Login successful!');
-    navigate('/dashboard/jobSeeker');
+  const handleOTPVerification = () => {
+    if (otp !== '123456') {
+      toast.error('Invalid OTP. Use 123456 for demo');
+      return;
+    }
+    
+    // Find user data and auto-login
+    const ncsUser = sampleData.ncsUsers.find(user => user.phone === phoneNumber);
+    if (ncsUser) {
+      const userData = {
+        id: 'user1',
+        name: `${ncsUser.firstName} ${ncsUser.lastName}`,
+        email: ncsUser.email,
+        phone: ncsUser.phone,
+        userType: 'jobSeeker' as const,
+        profileData: ncsUser
+      };
+      
+      login(userData);
+      toast.success('Login successful! Data loaded from NCS');
+      navigate('/dashboard/jobSeeker');
+    }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-md bg-white shadow-md rounded-lg">
-        <CardHeader className="flex flex-col space-y-1 p-6">
-          <CardTitle className="text-2xl font-semibold text-center">{t('job_seeker_login')}</CardTitle>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle>Job Seeker Login</CardTitle>
+          <CardDescription>
+            {step === 'ncs-check' && 'Let us know about your NCS registration'}
+            {step === 'phone-entry' && 'Enter your registered phone number'}
+            {step === 'otp-verification' && 'Enter the OTP sent to your phone'}
+          </CardDescription>
         </CardHeader>
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">{t('email')}</Label>
-              <Input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder={t('your_email')}
-                required
-                className="w-full"
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">{t('password')}</Label>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder={t('your_password')}
-                required
-                className="w-full"
-              />
-            </div>
-            <Button type="submit" className="w-full bg-blue-600 text-white hover:bg-blue-700">
-              {t('login')}
+        <CardContent className="space-y-4">
+          {step === 'ncs-check' && (
+            <>
+              <div className="space-y-3">
+                <Label className="text-base font-medium">
+                  Are you registered with National Career Service (NCS) portal?
+                </Label>
+                <RadioGroup value={hasNCSAccount} onValueChange={setHasNCSAccount}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="yes" />
+                    <Label htmlFor="yes">Yes, I am registered</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="no" />
+                    <Label htmlFor="no">No, I need to register</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <Button onClick={handleNCSChoice} className="w-full">
+                Continue
+              </Button>
+            </>
+          )}
+
+          {step === 'phone-entry' && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="Enter 10-digit phone number"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  maxLength={10}
+                />
+                <p className="text-xs text-gray-500">
+                  Demo: Use 9876543210 to test with sample data
+                </p>
+              </div>
+              <Button onClick={handlePhoneSubmit} className="w-full">
+                Send OTP
+              </Button>
+            </>
+          )}
+
+          {step === 'otp-verification' && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="otp">Enter OTP</Label>
+                <Input
+                  id="otp"
+                  type="text"
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength={6}
+                />
+                <p className="text-xs text-gray-500">
+                  Demo OTP: 123456
+                </p>
+              </div>
+              <Button onClick={handleOTPVerification} className="w-full">
+                Verify & Login
+              </Button>
+            </>
+          )}
+
+          <div className="text-center">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/auth-choice?action=login')}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              ← Back
             </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>
