@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -112,7 +113,7 @@ const JobProviderDashboard: React.FC = () => {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [candidateRating, setCandidateRating] = useState(5);
   const [completedJobToRate, setCompletedJobToRate] = useState<Job | null>(null);
-  const [candidateStatuses, setCandidateStatuses] = useState<Record<string, string>>({});
+  const [candidateStatuses, setCandidateStatuses] = useState<Record<string, 'applied' | 'selected' | 'offer_sent' | 'documents_requested'>>({});
   
   const [formData, setFormData] = useState({
     title: '',
@@ -322,7 +323,7 @@ const JobProviderDashboard: React.FC = () => {
     setCandidateRating(5);
   };
 
-  const handleCandidateAction = (jobId: string, candidateId: string, action: string) => {
+  const handleCandidateAction = (jobId: string, candidateId: string, action: 'applied' | 'selected' | 'offer_sent' | 'documents_requested') => {
     const key = `${jobId}_${candidateId}`;
     setCandidateStatuses(prev => ({ ...prev, [key]: action }));
     
@@ -334,7 +335,7 @@ const JobProviderDashboard: React.FC = () => {
     
     toast({
       title: "Action Completed",
-      description: actionMessages[action as keyof typeof actionMessages] || "Action completed successfully!",
+      description: actionMessages[action] || "Action completed successfully!",
     });
   };
 
@@ -618,6 +619,16 @@ const JobProviderDashboard: React.FC = () => {
                   placeholder="Tools/equipment needed"
                 />
               </div>
+            </div>
+            <div>
+              <Label htmlFor="description">Job Description *</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                placeholder="Describe the job requirements and responsibilities"
+                className="min-h-[100px]"
+              />
             </div>
             <div className="flex items-center space-x-2">
               <Switch
