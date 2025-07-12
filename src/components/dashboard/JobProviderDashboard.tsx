@@ -50,8 +50,8 @@ const JobProviderDashboard: React.FC = () => {
   // Use new user data if user is new, otherwise use existing data
   const userData = user?.isNewUser ? newUserData.newJobProvider : sampleData;
   const initialJobs = user?.isNewUser ? [] : sampleData.jobs;
-  // Fix: Access candidates from the correct source
-  const initialCandidates = user?.isNewUser ? [] : sampleData.candidates || [];
+  // Fix: Create empty candidates array since candidates don't exist in sampleData
+  const initialCandidates: any[] = [];
   
   // State management
   const [jobs, setJobs] = useState<Job[]>(initialJobs);
@@ -177,7 +177,6 @@ const JobProviderDashboard: React.FC = () => {
   const handleReactivateJob = (jobId: string) => {
     const jobToReactivate = inactiveJobs.find(job => job.id === jobId);
     if (jobToReactivate) {
-      // Pre-fill form with job data
       setJobForm({
         title: jobToReactivate.title,
         company: jobToReactivate.company,
@@ -233,7 +232,6 @@ const JobProviderDashboard: React.FC = () => {
       [candidateId]: action
     }));
 
-    // Persist selection when moving between states
     if (jobId && action === "selected") {
       setSelectedCandidates(prev => ({
         ...prev,
